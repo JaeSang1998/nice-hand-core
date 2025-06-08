@@ -1,0 +1,33 @@
+# Rust build artifacts
+/target/
+/Cargo.lock
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Debug output
+debug_output/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# WASM artifacts
+pkg/
+wasm-pack.log
+
+# Editor backups
+*~
+*.bak
+
+# Local development
+.env
+.env.local
