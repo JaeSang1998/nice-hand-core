@@ -1,20 +1,20 @@
-// Advanced Heuristic Strategy Demonstration
-// Shows the sophisticated poker logic in action with detailed analysis
+// 고급 휴리스틱 전략 시연
+// 상세한 분석을 통해 정교한 포커 로직 실행을 보여줍니다
 
 use nice_hand_core::web_api_simple::{QuickPokerAPI, WebGameState};
 
 fn main() {
-    println!("🃏 Advanced Poker Heuristic Strategy Demo");
+    println!("🃏 고급 포커 휴리스틱 전략 데모");
     println!("=========================================");
     
     let api = QuickPokerAPI::new();
     
-    // Test scenario 1: Premium preflop hand
-    println!("\n📋 Scenario 1: Premium Preflop Hand (AA)");
+    // 테스트 시나리오 1: 프리미엄 프리플롭 핸드
+    println!("\n📋 시나리오 1: 프리미엄 프리플롭 핸드 (AA)");
     println!("{}", "-".repeat(50));
     
     let premium_state = WebGameState {
-        hole_cards: [0, 13], // AA (Ace of Spades, Ace of Hearts)
+        hole_cards: [0, 13], // AA (스페이드 에이스, 하트 에이스)
         board: vec![],
         street: 0,
         pot: 150,
@@ -23,14 +23,14 @@ fn main() {
         opponent_stack: 1000,
     };
     
-    demonstrate_strategy(&api, premium_state, "Pocket Aces preflop facing a raise");
+    demonstrate_strategy(&api, premium_state, "포켓 에이스 프리플롭에서 레이즈에 직면");
     
-    // Test scenario 2: Marginal calling hand
-    println!("\n📋 Scenario 2: Marginal Calling Hand (KQ offsuit)");
+    // 테스트 시나리오 2: 경계선 콜링 핸드
+    println!("\n📋 시나리오 2: 경계선 콜링 핸드 (KQ 오프수트)");
     println!("{}", "-".repeat(50));
     
-    let marginal_state = WebGameState {
-        hole_cards: [11, 23], // KQ offsuit
+        let marginal_state = WebGameState {
+        hole_cards: [11, 23], // KQ 오프수트
         board: vec![],
         street: 0,
         pot: 200,
@@ -39,31 +39,31 @@ fn main() {
         opponent_stack: 800,
     };
     
-    demonstrate_strategy(&api, marginal_state, "KQ offsuit facing large preflop raise");
+    demonstrate_strategy(&api, marginal_state, "KQ 오프수트에서 큰 프리플롭 레이즈에 직면");
     
-    // Test scenario 3: Strong postflop hand (top pair)
-    println!("\n📋 Scenario 3: Strong Postflop Hand (Top Pair)");
+    // 테스트 시나리오 3: 강한 포스트플롭 핸드 (탑 페어)
+    println!("\n📋 시나리오 3: 강한 포스트플롭 핸드 (탑 페어)");
     println!("{}", "-".repeat(50));
     
     let postflop_state = WebGameState {
         hole_cards: [0, 26], // A♠ K♠
-        board: vec![1, 21, 34], // A♥ 9♠ J♥ - Top pair with great kicker
+        board: vec![1, 21, 34], // A♥ 9♠ J♥ - 훌륭한 키커를 가진 탑 페어
         street: 1,
         pot: 300,
-        to_call: 0, // Checking to us
+        to_call: 0, // 우리에게 체크
         my_stack: 700,
         opponent_stack: 700,
     };
     
-    demonstrate_strategy(&api, postflop_state, "Top pair Aces with King kicker on flop");
+    demonstrate_strategy(&api, postflop_state, "플롭에서 킹 키커를 가진 에이스 탑 페어");
     
-    // Test scenario 4: Flush draw
-    println!("\n📋 Scenario 4: Flush Draw (Semi-bluff spot)");
+    // 테스트 시나리오 4: 플러시 드로우
+    println!("\n📋 시나리오 4: 플러시 드로우 (세미 블러프 스팟)");
     println!("{}", "-".repeat(50));
     
     let flush_draw_state = WebGameState {
         hole_cards: [26, 39], // K♠ Q♠
-        board: vec![7, 20, 33], // 8♠ 8♥ 9♠ - Flush draw + straight draw
+        board: vec![7, 20, 33], // 8♠ 8♥ 9♠ - 플러시 드로우 + 스트레이트 드로우
         street: 1,
         pot: 400,
         to_call: 200,
@@ -71,15 +71,15 @@ fn main() {
         opponent_stack: 600,
     };
     
-    demonstrate_strategy(&api, flush_draw_state, "Flush draw facing bet on coordinated board");
+    demonstrate_strategy(&api, flush_draw_state, "연결된 보드에서 베팅에 직면한 플러시 드로우");
     
-    // Test scenario 5: Weak hand in bluff spot
-    println!("\n📋 Scenario 5: Weak Hand Bluff Spot");
+    // 테스트 시나리오 5: 블러프 스팟에서의 약한 핸드
+    println!("\n📋 시나리오 5: 약한 핸드 블러프 스팟");
     println!("{}", "-".repeat(50));
     
     let bluff_state = WebGameState {
         hole_cards: [4, 17], // 5♠ 6♥
-        board: vec![48, 49, 50], // K♠ Q♠ J♠ - Complete whiff
+                board: vec![48, 49, 50], // K♠ Q♠ J♠ - 완전히 빗나감
         street: 1,
         pot: 250,
         to_call: 0,
@@ -87,10 +87,10 @@ fn main() {
         opponent_stack: 750,
     };
     
-    demonstrate_strategy(&api, bluff_state, "Complete air on high coordinated board");
+    demonstrate_strategy(&api, bluff_state, "높은 연결 보드에서의 완전한 에어");
     
-    // Test scenario 6: Short stack all-in situation
-    println!("\n📋 Scenario 6: Short Stack All-in Decision");
+    // 테스트 시나리오 6: 숏 스택 올인 상황
+    println!("\n📋 시나리오 6: 숏 스택 올인 결정");
     println!("{}", "-".repeat(50));
     
     let short_stack_state = WebGameState {
@@ -98,15 +98,15 @@ fn main() {
         board: vec![],
         street: 0,
         pot: 400,
-        to_call: 180, // Almost half our stack
+        to_call: 180, // 우리 스택의 거의 절반
         my_stack: 400,
         opponent_stack: 800,
     };
     
-    demonstrate_strategy(&api, short_stack_state, "Pocket 7s short stack facing large raise");
+    demonstrate_strategy(&api, short_stack_state, "포켓 7s 숏 스택에서 큰 레이즈에 직면");
     
-    // Performance test
-    println!("\n📊 Performance Analysis");
+    // 성능 테스트
+    println!("\n📊 성능 분석");
     println!("{}", "-".repeat(50));
     
     let start = std::time::Instant::now();
@@ -125,53 +125,53 @@ fn main() {
     let responses = api.get_strategies_batch(test_states);
     let duration = start.elapsed();
     
-    println!("✅ Processed 1,000 decisions in {:?}", duration);
-    println!("⚡ Average: {:.2}μs per decision", duration.as_micros() as f64 / 1000.0);
+    println!("✅ 1,000개 결정을 {:?}에 처리", duration);
+    println!("⚡ 평균: 결정당 {:.2}μs", duration.as_micros() as f64 / 1000.0);
     
-    // Action distribution analysis
+    // 액션 분포 분석
     let mut action_counts = std::collections::HashMap::new();
     for response in &responses {
         *action_counts.entry(response.recommended_action.clone()).or_insert(0) += 1;
     }
     
-    println!("\n📈 Action Distribution (1,000 random scenarios):");
+    println!("\n📈 액션 분포 (1,000개 랜덤 시나리오):");
     for (action, count) in action_counts {
-        println!("  {} {}: {}% ({} decisions)", 
+        println!("  {} {}: {}% ({}개 결정)", 
                  get_action_emoji(&action), action, 
                  (count as f64 / 10.0), count);
     }
     
-    println!("\n🎯 Heuristic Enhancement Complete!");
-    println!("   ✓ Sophisticated hand evaluation");
-    println!("   ✓ Advanced betting strategies");
-    println!("   ✓ Context-aware decision making");
-    println!("   ✓ Production-ready performance");
+    println!("\n🎯 휴리스틱 향상 완료!");
+    println!("   ✓ 정교한 핸드 평가");
+    println!("   ✓ 고급 베팅 전략");
+    println!("   ✓ 맥락 인식 의사결정");
+    println!("   ✓ 운영 준비 성능");
 }
 
 fn demonstrate_strategy(api: &QuickPokerAPI, state: WebGameState, description: &str) {
-    println!("📝 Situation: {}", description);
+    println!("📝 상황: {}", description);
     
     let response = api.get_optimal_strategy(state.clone());
     
-    println!("🎯 Recommended Action: {} {}", 
+    println!("🎯 권장 액션: {} {}", 
              get_action_emoji(&response.recommended_action), 
              response.recommended_action);
-    println!("💪 Hand Strength: {:.1}%", response.hand_strength * 100.0);
-    println!("📊 Expected Value: {:.1} chips", response.expected_value);
-    println!("🎲 Confidence: {:.1}%", response.confidence * 100.0);
+    println!("💪 핸드 강도: {:.1}%", response.hand_strength * 100.0);
+    println!("📊 기댓값: {:.1} 칩", response.expected_value);
+    println!("🎲 신뢰도: {:.1}%", response.confidence * 100.0);
     
     if state.to_call > 0 {
-        println!("💰 Pot Odds: {:.1}%", response.pot_odds * 100.0);
+        println!("💰 팟 오즈: {:.1}%", response.pot_odds * 100.0);
     }
     
-    println!("🧠 Reasoning: {}", response.reasoning);
+    println!("🧠 추론: {}", response.reasoning);
     
-    println!("📈 Strategy Distribution:");
+    println!("📈 전략 분포:");
     let mut sorted_strategy: Vec<_> = response.strategy.iter().collect();
     sorted_strategy.sort_by(|a, b| b.1.partial_cmp(a.1).unwrap());
     
     for (action, probability) in sorted_strategy {
-        if *probability > 0.01 { // Only show actions with >1% probability
+        if *probability > 0.01 { // 1% 이상 확률인 액션만 표시
             println!("   {} {}: {:.1}%", 
                      get_action_emoji(action), action, probability * 100.0);
         }

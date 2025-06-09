@@ -1,12 +1,12 @@
-//! Web API Module
+//! 웹 API 모듈
 //!
-//! This module provides HTTP/WebSocket APIs for poker strategy evaluation:
-//! - Simple stateless API for quick strategy queries
-//! - Full-featured API with state tracking and batch processing
+//! 이 모듈은 포커 전략 평가를 위한 HTTP/WebSocket API들을 제공합니다:
+//! - 빠른 전략 쿼리를 위한 간단한 무상태 API
+//! - 상태 추적 및 배치 처리가 가능한 완전 기능 API
 
 pub mod web_api;
 pub mod web_api_simple;
 
-// Re-export selected types to avoid conflicts
+// 충돌을 피하기 위해 선택된 타입들을 재수출
 pub use web_api::{OfflineTrainer, PokerWebAPI, StrategyTable};
 pub use web_api_simple::QuickPokerAPI;

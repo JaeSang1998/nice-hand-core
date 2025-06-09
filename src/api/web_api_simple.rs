@@ -5,7 +5,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-/// Web API game state representation
+/// 웹 API 게임 상태 표현
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct WebGameState {
     /// 히어로의 홀카드 [카드1, 카드2] (0-51 범위)
@@ -20,69 +20,69 @@ pub struct WebGameState {
     pub to_call: u32,
     /// 칩 단위 히어로의 스택 크기
     pub my_stack: u32,
-    /// Opponent's stack size in chips
+    /// 칩 단위 상대방의 스택 크기
     pub opponent_stack: u32,
 }
 
-/// Enhanced strategy response with detailed analysis
+/// 상세 분석을 포함한 향상된 전략 응답
 #[derive(Debug, Serialize, Deserialize)]
 pub struct StrategyResponse {
-    /// Action probabilities (e.g., "fold": 0.2, "call": 0.5, "raise": 0.3)
+    /// 액션 확률 (예: "fold": 0.2, "call": 0.5, "raise": 0.3)
     pub strategy: HashMap<String, f64>,
-    /// Recommended primary action
+    /// 권장 주요 액션
     pub recommended_action: String,
-    /// Expected value estimation
+    /// 기댓값 추정
     pub expected_value: f64,
-    /// Decision confidence (0.0-1.0)
+    /// 결정 신뢰도 (0.0-1.0)
     pub confidence: f64,
-    /// Hand strength assessment (0.0-1.0)
+    /// 핸드 강도 평가 (0.0-1.0)
     pub hand_strength: f64,
-    /// Pot odds calculation
+    /// 팟 오즈 계산
     pub pot_odds: f64,
-    /// Strategic reasoning (for debugging/explanation)
+    /// 전략적 추론 (디버깅/설명용)
     pub reasoning: String,
 }
 
-/// Advanced poker strategy engine
+/// 고급 포커 전략 엔진
 ///
-/// Uses sophisticated heuristics based on:
-/// - Hand strength evaluation
-/// - Position analysis  
-/// - Stack depth considerations
-/// - Pot odds calculations
-/// - Opponent modeling (basic)
+/// 다음을 기반으로 한 정교한 휴리스틱 사용:
+/// - 핸드 강도 평가
+/// - 포지션 분석
+/// - 스택 깊이 고려사항
+/// - 팟 오즈 계산
+/// - 상대방 모델링 (기본)
 pub struct QuickPokerAPI {
-    /// Preflop hand rankings lookup table
+    /// 프리플랍 핸드 랭킹 조회 테이블
     preflop_rankings: HashMap<(u8, u8, bool), f64>,
 }
 
 impl QuickPokerAPI {
-    /// Initialize the poker API with precomputed hand rankings
+    /// 사전 계산된 핸드 랭킹으로 포커 API 초기화
     pub fn new() -> Self {
         let mut preflop_rankings = HashMap::new();
 
-        // Initialize premium hand rankings
+        // 프리미엄 핸드 랭킹 초기화
         Self::init_preflop_rankings(&mut preflop_rankings);
 
         Self { preflop_rankings }
     }
 
-    /// Comprehensive strategy calculation for given game state
+    /// 주어진 게임 상태에 대한 포괄적 전략 계산
     pub fn get_optimal_strategy(&self, state: WebGameState) -> StrategyResponse {
-        // 1. Calculate core metrics
+        // 1. 핵심 지표 계산
         let hand_strength = self.evaluate_hand_strength(&state);
         let pot_odds = self.calculate_pot_odds(&state);
-        // 2. Generate strategy based on sophisticated heuristics
+        // 2. 정교한 휴리스틱을 기반으로 전략 생성
         let strategy = self.calculate_advanced_strategy(&state, hand_strength, pot_odds);
 
-        // 3. Determine best action and reasoning
+        // 3. 최선의 액션과 근거 결정
         let recommended = self.get_best_action(&strategy);
         let reasoning = self.generate_reasoning(&state, hand_strength, pot_odds, &recommended);
 
-        // 4. Estimate expected value
+        // 4. 기댓값 추정
         let ev = self.estimate_expected_value(&state, &strategy, hand_strength);
 
-        // 5. Calculate confidence based on situation clarity
+        // 5. 상황 명확성을 기반으로 신뢰도 계산
         let confidence = self.calculate_confidence(&state, hand_strength, pot_odds);
 
         StrategyResponse {
@@ -96,7 +96,7 @@ impl QuickPokerAPI {
         }
     }
 
-    /// Batch processing for multiple game states
+    /// 여러 게임 상태에 대한 배치 처리
     pub fn get_strategies_batch(&self, states: Vec<WebGameState>) -> Vec<StrategyResponse> {
         states
             .into_iter()
@@ -104,16 +104,16 @@ impl QuickPokerAPI {
             .collect()
     }
 
-    /// Quick recommendation without full analysis
+    /// 전체 분석 없이 빠른 추천
     pub fn get_quick_recommendation(&self, state: WebGameState) -> String {
         let hand_strength = self.evaluate_hand_strength(&state);
         let pot_odds = self.calculate_pot_odds(&state);
 
         if state.to_call == 0 {
-            // Can check - decide between check/bet
+            // 체크 가능 - 체크/베트 선택
             if hand_strength > 0.7 { "bet" } else { "check" }.to_string()
         } else {
-            // Must call or fold
+            // 콜하거나 폴드해야 함
             if hand_strength > pot_odds + 0.1 {
                 "call"
             } else {
@@ -123,7 +123,7 @@ impl QuickPokerAPI {
         }
     }
 
-    /// Advanced strategy calculation engine
+    /// 고급 전략 계산 엔진
     fn calculate_advanced_strategy(
         &self,
         state: &WebGameState,
@@ -140,15 +140,15 @@ impl QuickPokerAPI {
         };
 
         let bet_size_factor = if stack_to_pot_ratio > 10.0 {
-            0.5 // Small bets with deep stacks
+            0.5 // 딥 스택에서 작은 베트
         } else if stack_to_pot_ratio > 5.0 {
-            0.75 // Medium bets
+            0.75 // 중간 베트
         } else {
-            1.2 // Large bets / all-in with short stacks
+            1.2 // 큰 베트 / 숏 스택에서 올인
         };
 
         if state.to_call == 0 {
-            // Check/bet situation
+            // 체크/베트 상황
             self.calculate_check_bet_strategy(
                 &mut strategy,
                 hand_strength,
@@ -156,7 +156,7 @@ impl QuickPokerAPI {
                 stack_to_pot_ratio,
             )
         } else {
-            // Call/fold/raise situation
+            // 콜/폴드/레이즈 상황
             self.calculate_call_fold_strategy(
                 &mut strategy,
                 hand_strength,
@@ -166,12 +166,12 @@ impl QuickPokerAPI {
             )
         }
 
-        // Normalize probabilities
+        // 확률 정규화
         self.normalize_strategy(&mut strategy);
         strategy
     }
 
-    /// Calculate strategy for check/bet situations
+    /// 체크/베트 상황에 대한 전략 계산
     fn calculate_check_bet_strategy(
         &self,
         strategy: &mut HashMap<String, f64>,
@@ -180,35 +180,35 @@ impl QuickPokerAPI {
         spr: f64,
     ) {
         if hand_strength > 0.85 {
-            // Premium hands: bet for value most of the time
+            // 프리미엄 핸드: 대부분 밸류 베트
             strategy.insert("check".to_string(), 0.15);
             strategy.insert("bet_small".to_string(), 0.3);
             strategy.insert("bet_large".to_string(), 0.55);
         } else if hand_strength > 0.7 {
-            // Strong hands: balanced approach
+            // 강한 핸드: 균형 잡힌 접근
             strategy.insert("check".to_string(), 0.4);
             strategy.insert("bet_small".to_string(), 0.45);
             strategy.insert("bet_large".to_string(), 0.15);
         } else if hand_strength > 0.55 {
-            // Medium hands: mostly check, some thin value
+            // 중간 핸드: 대부분 체크, 일부 씬 밸류
             strategy.insert("check".to_string(), 0.7);
             strategy.insert("bet_small".to_string(), 0.25);
             strategy.insert("bet_large".to_string(), 0.05);
         } else if hand_strength > 0.3 {
-            // Weak hands with bluff potential
+            // 블러프 잠재력이 있는 약한 핸드
             let bluff_freq = if spr > 8.0 { 0.15 } else { 0.25 };
             strategy.insert("check".to_string(), 1.0 - bluff_freq);
             strategy.insert("bet_small".to_string(), bluff_freq * 0.8);
             strategy.insert("bet_large".to_string(), bluff_freq * 0.2);
         } else {
-            // Very weak hands: mostly check
+            // 매우 약한 핸드: 대부분 체크
             strategy.insert("check".to_string(), 0.9);
             strategy.insert("bet_small".to_string(), 0.08);
             strategy.insert("bet_large".to_string(), 0.02);
         }
     }
 
-    /// Calculate strategy for call/fold/raise situations
+    /// 콜/폴드/레이즈 상황에 대한 전략 계산
     fn calculate_call_fold_strategy(
         &self,
         strategy: &mut HashMap<String, f64>,
@@ -217,52 +217,52 @@ impl QuickPokerAPI {
         _bet_factor: f64,
         state: &WebGameState,
     ) {
-        let call_requirement = pot_odds + 0.05; // Need slight edge to call
-        let raise_threshold = 0.7; // Need strong hand to raise
+        let call_requirement = pot_odds + 0.05; // 콜하려면 약간의 우위 필요
+        let raise_threshold = 0.7; // 레이즈하려면 강한 핸드 필요
 
         let facing_large_bet = state.to_call > state.pot / 2;
         let stack_commitment = state.to_call as f64 / state.my_stack as f64;
 
         if hand_strength > 0.9 {
-            // Nuts/near-nuts: almost always raise/call
+            // 넛/넛에 가까움: 거의 항상 레이즈/콜
             strategy.insert("fold".to_string(), 0.02);
             strategy.insert("call".to_string(), 0.23);
             strategy.insert("raise".to_string(), 0.75);
         } else if hand_strength > raise_threshold {
-            // Strong hands: mostly call/raise
+            // 강한 핸드: 대부분 콜/레이즈
             let raise_freq = if facing_large_bet { 0.4 } else { 0.6 };
             strategy.insert("fold".to_string(), 0.05);
             strategy.insert("call".to_string(), 0.95 - raise_freq);
             strategy.insert("raise".to_string(), raise_freq);
         } else if hand_strength > call_requirement {
-            // Marginal calling hands
+            // 경계선 콜링 핸드
             if facing_large_bet && stack_commitment > 0.3 {
-                // Large bet with significant stack commitment - more folding
+                // 상당한 스택 커밋이 있는 큰 베트 - 더 많은 폴딩
                 strategy.insert("fold".to_string(), 0.4);
                 strategy.insert("call".to_string(), 0.55);
                 strategy.insert("raise".to_string(), 0.05);
             } else {
-                // Standard calling situation
+                // 표준 콜링 상황
                 strategy.insert("fold".to_string(), 0.2);
                 strategy.insert("call".to_string(), 0.75);
                 strategy.insert("raise".to_string(), 0.05);
             }
         } else if hand_strength > 0.2 && !facing_large_bet {
-            // Weak hands - occasional bluff raise
+            // 약한 핸드 - 간헐적 블러프 레이즈
             let bluff_freq = 0.1;
             strategy.insert("fold".to_string(), 0.9 - bluff_freq);
             strategy.insert("call".to_string(), 0.05);
             strategy.insert("raise".to_string(), bluff_freq);
         } else {
-            // Very weak hands: fold most of the time
+            // 매우 약한 핸드: 대부분 폴드
             strategy.insert("fold".to_string(), 0.95);
             strategy.insert("call".to_string(), 0.05);
         }
     }
 
-    /// Initialize preflop hand rankings lookup table
+    /// 프리플랍 핸드 랭킹 조회 테이블 초기화
     fn init_preflop_rankings(rankings: &mut HashMap<(u8, u8, bool), f64>) {
-        // Pocket pairs
+        // 포켓 페어
         rankings.insert((12, 12, false), 0.95); // AA
         rankings.insert((11, 11, false), 0.92); // KK
         rankings.insert((10, 10, false), 0.88); // QQ
@@ -277,7 +277,7 @@ impl QuickPokerAPI {
         rankings.insert((1, 1, false), 0.30); // 33
         rankings.insert((0, 0, false), 0.25); // 22
 
-        // Premium suited hands
+        // 프리미엄 수티드 핸드
         rankings.insert((12, 11, true), 0.90); // AKs
         rankings.insert((12, 10, true), 0.85); // AQs
         rankings.insert((11, 10, true), 0.80); // KQs
@@ -286,7 +286,7 @@ impl QuickPokerAPI {
         rankings.insert((11, 9, true), 0.72); // KJs
         rankings.insert((10, 9, true), 0.68); // QJs
 
-        // Premium offsuit hands
+        // 프리미엄 오프수트 핸드
         rankings.insert((12, 11, false), 0.82); // AKo
         rankings.insert((12, 10, false), 0.76); // AQo
         rankings.insert((11, 10, false), 0.71); // KQo
@@ -314,7 +314,7 @@ impl QuickPokerAPI {
         }
     }
 
-    /// Calculate pot odds
+    /// 팟 오즈 계산
     fn calculate_pot_odds(&self, state: &WebGameState) -> f64 {
         if state.to_call == 0 {
             1.0 // No call required
@@ -323,7 +323,7 @@ impl QuickPokerAPI {
         }
     }
 
-    /// Generate strategic reasoning explanation  
+    /// 전략적 추론 설명 생성  
     fn generate_reasoning(
         &self,
         state: &WebGameState,
@@ -333,15 +333,15 @@ impl QuickPokerAPI {
     ) -> String {
         let mut reasoning = String::new();
 
-        // Hand strength assessment
+        // 핸드 스트렝스 평가
         if hand_strength > 0.8 {
-            reasoning.push_str("Premium hand strength. ");
+            reasoning.push_str("프리미엄 핸드 스트렝스. ");
         } else if hand_strength > 0.6 {
-            reasoning.push_str("Good hand strength. ");
+            reasoning.push_str("좋은 핸드 스트렝스. ");
         } else if hand_strength > 0.4 {
-            reasoning.push_str("Marginal hand strength. ");
+            reasoning.push_str("한계적 핸드 스트렝스. ");
         } else {
-            reasoning.push_str("Weak hand strength. ");
+            reasoning.push_str("약한 핸드 스트렝스. ");
         }
 
         // Pot odds analysis
@@ -378,7 +378,7 @@ impl QuickPokerAPI {
         reasoning
     }
 
-    /// Estimate expected value for the strategy
+    /// 전략의 기댓값 추정
     fn estimate_expected_value(
         &self,
         state: &WebGameState,
@@ -398,7 +398,7 @@ impl QuickPokerAPI {
                     }
                 }
                 "check" => {
-                    // Pot control - small positive/negative based on hand strength
+                    // 팟 컨트롤 - 핸드 스트렝스에 기반한 작은 양수/음수
                     (win_rate - 0.5) * state.pot as f64 * 0.3
                 }
                 "call" => {
@@ -432,7 +432,7 @@ impl QuickPokerAPI {
         ev
     }
 
-    /// Calculate decision confidence based on situation clarity
+    /// 상황 명확성에 기반한 의사결정 신뢰도 계산
     fn calculate_confidence(&self, state: &WebGameState, hand_strength: f64, pot_odds: f64) -> f64 {
         let mut confidence: f64 = 0.7; // Base confidence
 
@@ -461,7 +461,7 @@ impl QuickPokerAPI {
         confidence.min(0.95)
     }
 
-    /// Normalize strategy probabilities to sum to 1.0
+    /// 전략 확률을 1.0으로 정규화
     fn normalize_strategy(&self, strategy: &mut HashMap<String, f64>) {
         let total: f64 = strategy.values().sum();
         if total > 0.0 {
@@ -471,7 +471,7 @@ impl QuickPokerAPI {
         }
     }
 
-    /// Advanced hand strength evaluation (0.0 - 1.0)
+    /// 고급 핸드 스트렝스 평가 (0.0 - 1.0)
     fn evaluate_hand_strength(&self, state: &WebGameState) -> f64 {
         let hole = state.hole_cards;
 
@@ -484,7 +484,7 @@ impl QuickPokerAPI {
         }
     }
 
-    /// Sophisticated preflop hand strength evaluation
+    /// 정교한 프리플랍 핸드 스트렝스 평가
     fn preflop_hand_strength(&self, hole: [u8; 2]) -> f64 {
         let rank1 = hole[0] % 13;
         let rank2 = hole[1] % 13;
@@ -516,7 +516,7 @@ impl QuickPokerAPI {
         }
     }
 
-    /// Advanced postflop hand strength evaluation
+    /// 고급 포스트플랍 핸드 스트렝스 평가
     fn postflop_hand_strength(&self, hole: [u8; 2], board: &[u8]) -> f64 {
         let hole_ranks: Vec<u8> = hole.iter().map(|&c| c % 13).collect();
         let hole_suits: Vec<u8> = hole.iter().map(|&c| c / 13).collect();
@@ -544,7 +544,7 @@ impl QuickPokerAPI {
         let quads = rank_counts.iter().filter(|&&count| count >= 4).count();
         let flush_possible = suit_counts.iter().any(|&count| count >= 5);
 
-        // Evaluate hand strength
+        // 핸드 스트렝스 평가
         if quads > 0 {
             0.95 // Four of a kind
         } else if trips > 0 && pairs > 1 {
@@ -564,7 +564,7 @@ impl QuickPokerAPI {
         }
     }
 
-    /// Evaluate flush strength
+    /// 플러시 스트렝스 평가
     fn evaluate_flush_strength(&self, ranks: &[u8], suits: &[u8]) -> f64 {
         let mut suit_ranks = [Vec::new(), Vec::new(), Vec::new(), Vec::new()];
         for (i, &suit) in suits.iter().enumerate() {
@@ -589,7 +589,7 @@ impl QuickPokerAPI {
         0.82 // Default flush value
     }
 
-    /// Check for straight
+    /// 스트레이트 확인
     fn has_straight(&self, ranks: &[u8]) -> bool {
         let mut unique_ranks: Vec<u8> = ranks.iter().cloned().collect();
         unique_ranks.sort();
@@ -614,7 +614,7 @@ impl QuickPokerAPI {
         false
     }
 
-    /// Evaluate straight strength
+    /// 스트레이트 스트렝스 평가
     fn evaluate_straight_strength(&self, ranks: &[u8]) -> f64 {
         let max_rank = *ranks.iter().max().unwrap_or(&0);
         if max_rank >= 12 {
@@ -626,7 +626,7 @@ impl QuickPokerAPI {
         }
     }
 
-    /// Evaluate pair strength
+    /// 페어 스트렝스 평가
     fn evaluate_pair_strength(
         &self,
         hole_ranks: &[u8],
@@ -666,7 +666,7 @@ impl QuickPokerAPI {
         }
     }
 
-    /// Evaluate high card strength
+    /// 하이카드 스트렝스 평가
     fn evaluate_high_card_strength(&self, hole_ranks: &[u8], all_ranks: &[u8]) -> f64 {
         let max_hole = hole_ranks.iter().max().unwrap_or(&0);
         let max_all = all_ranks.iter().max().unwrap_or(&0);
@@ -689,7 +689,7 @@ impl QuickPokerAPI {
         }
     }
 
-    /// Get the best action recommendation
+    /// 최고 액션 추천 받기
     fn get_best_action(&self, strategy: &HashMap<String, f64>) -> String {
         strategy
             .iter()
@@ -721,7 +721,7 @@ mod tests {
 
         assert!(!response.strategy.is_empty());
         assert!(!response.recommended_action.is_empty());
-        println!("Strategy: {:?}", response);
+        println!("전략: {:?}", response);
     }
 
     #[test]
@@ -739,7 +739,7 @@ mod tests {
         };
 
         let response = api.get_optimal_strategy(state);
-        println!("Postflop strategy: {:?}", response);
+        println!("포스트플랍 전략: {:?}", response);
 
         assert!(!response.strategy.is_empty());
     }

@@ -1,33 +1,33 @@
 use nice_hand_core::game::tournament::*;
 
-/// Extended Multi-Table Tournament (MTT) Demo
+/// 확장 멀티테이블 토너먼트 (MTT) 데모
 /// 
-/// This example demonstrates:
-/// - Multi-table balancing algorithms
-/// - Player movement and consolidation
-/// - Table breaking logic
-/// - Real-time tournament progression
+/// 이 예제는 다음을 보여줍니다:
+/// - 멀티테이블 밸런싱 알고리즘
+/// - 플레이어 이동 및 통합
+/// - 테이블 브레이킹 로직
+/// - 실시간 토너먼트 진행
 
 fn main() {
-    println!("=== Extended Multi-Table Tournament Demo ===\n");
+    println!("=== 확장 멀티테이블 토너먼트 데모 ===\n");
 
-    // Create a large tournament with multiple tables
+    // 여러 테이블로 대형 토너먼트 생성
     let mut mtt_manager = create_large_tournament();
     
-    // Demonstrate table balancing
+    // 테이블 밸런싱 시연
     demonstrate_table_balancing(&mut mtt_manager);
     
-    // Simulate tournament progression
+    // 토너먼트 진행 시뮬레이션
     simulate_tournament_progression(&mut mtt_manager);
     
-    // Show final table dynamics
+    // 파이널 테이블 역학 보여주기
     demonstrate_final_table(&mut mtt_manager);
 }
 
 fn create_large_tournament() -> MTTManager {
-    println!("Creating 180-player tournament with 20 tables...");
+    println!("20개 테이블로 180명 플레이어 토너먼트 생성 중...");
     
-    // Create tournament structure
+    // 토너먼트 구조 생성
     let tournament_structure = TournamentStructure {
         levels: create_extended_blind_structure(),
         level_duration_minutes: 20,
@@ -35,11 +35,11 @@ fn create_large_tournament() -> MTTManager {
         ante_schedule: vec![],
     };
     
-    // Create MTT with 180 players, 9 per table, prize pool of $18,000
+    // 180명 플레이어, 테이블당 9명, 상금 풀 $18,000로 MTT 생성
     let mtt_manager = MTTManager::new(180, 9, tournament_structure, 18000);
     
-    println!("Tournament created with {} players across {} tables", 
-             180, mtt_manager.tables.len());
+    println!("{} 개 테이블에 {} 명 플레이어로 토너먼트 생성됨", 
+             mtt_manager.tables.len(), 180);
     println!();
     
     mtt_manager
@@ -88,27 +88,27 @@ fn create_mtt_payout_structure(total_players: usize) -> Vec<f64> {
 }
 
 fn demonstrate_table_balancing(mtt_manager: &mut MTTManager) {
-    println!("=== Table Balancing Demonstration ===");
+    println!("=== 테이블 밸런싱 시연 ===");
     
-    // Simulate some eliminations to trigger rebalancing
-    println!("Simulating eliminations to trigger table balancing...");
+    // 리밸런싱을 트리거하기 위해 일부 탈락 시뮬레이션
+    println!("테이블 밸런싱을 트리거하기 위해 탈락 시뮬레이션 중...");
     
-    // Eliminate 3 players from table 0
+    // 테이블 0에서 3명 탈락
     eliminate_players_from_table(mtt_manager, 0, 3);
     
-    // Eliminate 4 players from table 1  
+    // 테이블 1에서 4명 탈락
     eliminate_players_from_table(mtt_manager, 1, 4);
     
-    // Eliminate 2 players from table 2
+    // 테이블 2에서 2명 탈락
     eliminate_players_from_table(mtt_manager, 2, 2);
     
-    println!("Before balancing:");
+    println!("밸런싱 전:");
     print_table_summary(mtt_manager);
     
-    // Trigger table balancing
+    // 테이블 밸런싱 트리거
     mtt_manager.balance_tables();
     
-    println!("After balancing:");
+    println!("밸런싱 후:");
     print_table_summary(mtt_manager);
     println!();
 }
@@ -117,7 +117,7 @@ fn eliminate_players_from_table(mtt_manager: &mut MTTManager, table_id: usize, c
     for i in 0..count {
         mtt_manager.eliminate_player(table_id as u32, (i + 1) as u32);
     }
-    println!("Eliminated {} players from table {}", count, table_id);
+    println!("테이블 {}에서 {} 명 탈락", table_id, count);
 }
 
 fn print_table_summary(mtt_manager: &MTTManager) {
@@ -133,84 +133,84 @@ fn print_table_summary(mtt_manager: &MTTManager) {
             total_chips / player_count
         } else { 0 };
         
-        println!("  Table {}: {} players, avg stack: {}", i, player_count, avg_stack);
+        println!("  테이블 {}: {} 명, 평균 스택: {}", i, player_count, avg_stack);
     }
 }
 
 fn simulate_tournament_progression(mtt_manager: &mut MTTManager) {
-    println!("=== Tournament Progression Simulation ===");
+    println!("=== 토너먼트 진행 시뮬레이션 ===");
     
     let mut eliminations = 0;
     let total_players = 180;
     
-    // Simulate progression down to final table
+    // 파이널 테이블까지 진행 시뮬레이션
     while mtt_manager.count_active_players() > 9 && eliminations < 100 {
-        // Simulate elimination every few minutes
+        // 몇 분마다 탈락 시뮬레이션
         let table_to_eliminate_from = eliminations % mtt_manager.tables.len();
         
-        // Try to eliminate a player (use sequential player IDs)
+        // 플레이어 탈락 시도 (순차 플레이어 ID 사용)
         let player_id_to_eliminate = (eliminations + 1) as u32;
         mtt_manager.eliminate_player(table_to_eliminate_from as u32, player_id_to_eliminate);
         eliminations += 1;
         
-        // Show progress every 20 eliminations
+        // 20명 탈락마다 진행상황 보여주기
         if eliminations % 20 == 0 {
             let remaining = mtt_manager.count_active_players();
             let progress = ((total_players - remaining) as f64 / total_players as f64) * 100.0;
-            println!("Progress: {:.1}% - {} players remaining", progress, remaining);
+            println!("진행률: {:.1}% - {} 명 남음", progress, remaining);
             
-            // Show table consolidation
+            // 테이블 통합 보여주기
             if mtt_manager.tables.len() < 10 {
                 print_table_summary(mtt_manager);
             }
         }
         
-        // Rebalance tables every 5 eliminations
+        // 5명 탈락마다 테이블 리밸런싱
         if eliminations % 5 == 0 {
             mtt_manager.balance_tables();
         }
     }
     
-    println!("Reached final table stage with {} players!", mtt_manager.count_active_players());
+    println!("파이널 테이블 단계에 {} 명으로 도달!", mtt_manager.count_active_players());
     println!();
 }
 
 fn demonstrate_final_table(mtt_manager: &mut MTTManager) {
-    println!("=== Final Table Dynamics ===");
+    println!("=== 파이널 테이블 역학 ===");
     
     let remaining = mtt_manager.count_active_players();
-    println!("Final table reached with {} players", remaining);
+    println!("파이널 테이블에 {} 명으로 도달", remaining);
     
-    // Show ICM calculations for final table using tournament standings
+    // 토너먼트 순위를 사용한 파이널 테이블 ICM 계산 보여주기
     let standings = mtt_manager.get_tournament_standings();
     let stacks: Vec<u32> = standings.iter().map(|(_, stack, _)| *stack).collect();
     
     if !stacks.is_empty() {
         let total_chips: u32 = stacks.iter().sum();
         
-        println!("Final table chip distribution:");
+        println!("파이널 테이블 칩 분포:");
         for (i, &stack) in stacks.iter().enumerate() {
-            let bb_count = stack / 1000; // Assuming 500/1000 blinds
+            let bb_count = stack / 1000; // 500/1000 블라인드 가정
             let percentage = (stack as f64 / total_chips as f64) * 100.0;
-            println!("  Player {}: {} chips ({:.1}%, {} BB)", 
+            println!("  플레이어 {}: {} 칩 ({:.1}%, {} BB)", 
                      i + 1, stack, percentage, bb_count);
         }
         
-        // Calculate ICM values
+        // ICM 값 계산
         let payout_structure = create_mtt_payout_structure(180);
         let final_payouts: Vec<f64> = payout_structure.into_iter().take(stacks.len()).collect();
         
         let icm_calculator = ICMCalculator::new(stacks.clone(), final_payouts.iter().map(|&x| x as u64).collect());
         let icm_values = icm_calculator.calculate_equity();
         
-        println!("\nICM Values:");
+        println!("\nICM 값:");
         for (i, &icm_value) in icm_values.iter().enumerate() {
             let chip_value = (stacks[i] as f64 / total_chips as f64) * final_payouts.iter().sum::<f64>();
             let icm_pressure = ((icm_value - chip_value) / chip_value) * 100.0;
-            println!("  Player {}: ${:.2} (chip EV: ${:.2}, ICM pressure: {:.1}%)", 
+            println!("  플레이어 {}: ${:.2} (칩 EV: ${:.2}, ICM 압박: {:.1}%)", 
                      i + 1, icm_value, chip_value, icm_pressure);
         }
     }
     
-    println!("\n=== Tournament Complete ===");
+    println!("\n=== 토너먼트 완료 ===");
 }

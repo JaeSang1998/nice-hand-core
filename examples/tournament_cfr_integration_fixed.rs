@@ -1,26 +1,26 @@
-// Integration of Tournament Features with CFR Training
+// 토너먼트 기능과 CFR 훈련의 통합
 use nice_hand_core::game::holdem;
 use nice_hand_core::game::tournament::*;
 use nice_hand_core::solver::cfr_core::*;
 use std::time::Instant;
 
 fn main() {
-    println!("=== Tournament-Aware CFR Training Demo ===\n");
+    println!("=== 토너먼트 인식 CFR 훈련 데모 ===\n");
 
     // Demo 1: Train CFR with tournament-specific evaluation
     demo_tournament_cfr_integration();
 
-    // Demo 2: Adaptive strategy based on tournament context
+    // 데모 2: 토너먼트 상황에 기반한 적응형 전략
     demo_adaptive_tournament_strategy();
 
-    // Demo 3: Real-time tournament decision making
+    // 데모 3: 실시간 토너먼트 의사결정
     demo_realtime_tournament_decisions();
 
-    println!("\n=== Tournament CFR Integration Complete ===");
+    println!("\n=== 토너먼트 CFR 통합 완료 ===");
 }
 
 fn demo_tournament_cfr_integration() {
-    println!("🎯 CFR Training with Tournament Evaluation");
+    println!("🎯 토너먼트 평가와 함께하는 CFR 훈련");
 
     // Create tournament context
     let structure = TournamentStructure {
@@ -48,7 +48,7 @@ fn demo_tournament_cfr_integration() {
 
     let tournament_evaluator = TournamentEvaluator::new(tournament_state, player_stacks.clone());
 
-    // Create holdem game state for CFR training
+    // CFR 훈련을 위한 홀덤 게임 상태 생성
     let mut game_state = holdem::State::new(); // Creates 2-player heads-up game
     game_state.pot = 300;
     game_state.to_call = 150;
@@ -77,21 +77,21 @@ fn demo_tournament_cfr_integration() {
     println!("   ⏱️  Training completed in {:?}", training_time);
 
     // Show how tournament context affects decisions
-    println!("   📊 Tournament Impact Analysis:");
+    println!("   📊 토너먼트 영향 분석:");
     let normal_value = 1000.0; // Simplified chip value
     let icm_value = tournament_evaluator.evaluate_terminal_state(&player_stacks, 0);
-    println!("      Normal chip value: {:.0}", normal_value);
-    println!("      ICM-adjusted value: {:.3}", icm_value);
+    println!("      일반 칩 가치: {:.0}", normal_value);
+    println!("      ICM 조정 가치: {:.3}", icm_value);
     println!(
         "      ICM factor: {:.3}x",
         icm_value / (normal_value / 1000.0)
     );
 
-    println!("   ✅ CFR successfully integrated with tournament evaluation\n");
+    println!("   ✅ CFR이 토너먼트 평가와 성공적으로 통합됨\n");
 }
 
 fn demo_adaptive_tournament_strategy() {
-    println!("🔄 Adaptive Strategy Based on Tournament Context");
+    println!("🔄 토너먼트 상황에 기반한 적응형 전략");
 
     // Create different tournament scenarios
     let scenarios = vec![
@@ -125,7 +125,7 @@ fn demo_adaptive_tournament_strategy() {
         let mut tournament_state = TournamentState::new(structure, 180, 500000);
         tournament_state.players_remaining = players_remaining;
 
-        // Calculate bubble strategy for different stack sizes
+        // 다양한 스택 크기에 대한 버블 전략 계산
         let bubble_strategy = BubbleStrategy::new(players_remaining, payout_spots);
 
         println!(
@@ -158,11 +158,11 @@ fn demo_adaptive_tournament_strategy() {
         println!();
     }
 
-    println!("   ✅ Strategy adapts correctly to tournament dynamics\n");
+    println!("   ✅ 전략이 토너먼트 역학에 올바르게 적응함\n");
 }
 
 fn demo_realtime_tournament_decisions() {
-    println!("⚡ Real-time Tournament Decision Making");
+    println!("⚡ 실시간 토너먼트 의사결정");
 
     // Setup realistic tournament scenario
     let structure = TournamentStructure {
@@ -211,7 +211,7 @@ fn demo_realtime_tournament_decisions() {
         // Calculate ICM pressure
         let icm_pressure = evaluator.calculate_icm_adjusted_ev(player_idx, -1000);
 
-        // Get bubble strategy recommendation
+        // 버블 전략 추천 가져오기
         let bubble_strategy = BubbleStrategy::new(10, 9);
         let should_be_aggressive =
             bubble_strategy.should_make_aggressive_play(stack_ratio, icm_pressure.abs());
@@ -271,5 +271,5 @@ fn demo_realtime_tournament_decisions() {
         1000.0 / decision_time.as_secs_f64()
     );
 
-    println!("   ✅ Real-time tournament decisions working efficiently\n");
+    println!("   ✅ 실시간 토너먼트 의사결정이 효율적으로 작동함\n");
 }

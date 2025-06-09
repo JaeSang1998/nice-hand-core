@@ -1,10 +1,10 @@
 use nice_hand_core::game::tournament::*;
 use std::collections::HashMap;
 
-/// Tournament CFR with ICM Integration
+/// ICM 통합 토너먼트 CFR
 /// 
-/// This example demonstrates:
-/// - CFR training with ICM-adjusted utilities
+/// 이 예제는 다음을 보여줍니다:
+/// - ICM 조정 유틸리티를 통한 CFR 훈련
 /// - Tournament-specific strategy calculation
 /// - Dynamic strategy adaptation based on stack sizes
 /// - ICM pressure modeling in CFR
@@ -20,7 +20,7 @@ fn main() {
 }
 
 fn demonstrate_basic_icm_cfr() {
-    println!("=== Basic ICM-Adjusted CFR Training ===");
+    println!("=== 기본 ICM 조정 CFR 훈련 ===");
     
     let stacks = vec![5000, 4000, 3000, 2000];
     let payouts = vec![6000.0, 3600.0, 2400.0];
@@ -59,7 +59,7 @@ fn demonstrate_basic_icm_cfr() {
 }
 
 fn demonstrate_bubble_cfr_training() {
-    println!("=== Bubble-Specific CFR Training ===");
+    println!("=== 버블 특화 CFR 훈련 ===");
     
     // Classic bubble scenario: 4 players, 3 paid
     let stacks = vec![6000, 5000, 4500, 1500];
@@ -121,10 +121,10 @@ fn demonstrate_final_table_cfr() {
     
     // Different final table dynamics
     let final_table_spots = vec![
-        ("Chip leader aggression", 0, "How aggressive should chip leader be?"),
-        ("Short stack desperation", 5, "When should short stack gamble?"),
-        ("Medium stack survival", 3, "How tight should medium stacks play?"),
-        ("Pay jump pressure", 2, "How does next pay jump affect play?"),
+        ("칩 리더 공격성", 0, "칩 리더는 얼마나 공격적이어야 할까?"),
+        ("숏 스택 절망", 5, "숏 스택은 언제 도박해야 할까?"),
+        ("미디엄 스택 생존", 3, "미디엄 스택은 얼마나 타이트하게 플레이해야 할까?"),
+        ("상금 점프 압박", 2, "다음 상금 점프가 플레이에 어떤 영향을 미칠까?"),
     ];
     
     for (spot_name, player_idx, description) in final_table_spots {
@@ -267,7 +267,7 @@ impl ICMCFRTrainer {
     }
     
     fn train_scenario(&mut self, _street: u8, iterations: u32) -> CFRResults {
-        // Simulate CFR training with ICM utilities
+        // ICM 유틸리티를 통한 CFR 훈련 시뮬레이션
         let base_convergence = 1.0 - (1.0 / (iterations as f64 + 1.0));
         let icm_values = self.icm_calculator.calculate_equity();
         let average_utility = icm_values.iter().sum::<f64>() / icm_values.len() as f64;

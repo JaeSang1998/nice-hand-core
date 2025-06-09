@@ -449,7 +449,7 @@ mod tests {
     fn test_action_sequence(initial_state: &holdem::State, action_indices: &[usize], description: &str) {
         use crate::cfr_core::{Game, GameState};
         
-        println!("Testing: {}", description);
+        println!("테스트: {}", description);
         let mut state = initial_state.clone();
         let mut step = 0;
         let max_steps = 100;
@@ -504,13 +504,13 @@ mod tests {
         let mut trainer = Trainer::<holdem::State>::new();
         let initial_state = holdem::State::new();
         
-        println!("Starting CFR with 1 iteration...");
+        println!("1번 반복으로 CFR 시작 중...");
         
         // Try just 1 iteration to see where it fails
         trainer.run(vec![initial_state], 1);
         
-        println!("CFR completed successfully!");
-        println!("Nodes created: {}", trainer.nodes.len());
+        println!("CFR이 성공적으로 완료되었습니다!");
+        println!("생성된 노드: {}", trainer.nodes.len());
     }
 
     /// Debug test to identify infinite recursion in state transitions
@@ -538,7 +538,7 @@ mod tests {
                 current_state.pot
             );
             
-            println!("Step {}: {}", step, state_key);
+            println!("단계 {}: {}", step, state_key);
             
             if visited_states.contains(&state_key) {
                 println!("🔄 CYCLE DETECTED at step {}: {}", step, state_key);

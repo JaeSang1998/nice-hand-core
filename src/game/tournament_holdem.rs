@@ -6,22 +6,22 @@ use crate::game::tournament::{ICMCalculator, TournamentEvaluator, TournamentStat
 use crate::solver::cfr_core::{Game, GameState, Trainer};
 use rand::rngs::ThreadRng;
 
-/// Tournament Texas Hold'em state that combines regular Hold'em with tournament context
+/// 정규 홀덤과 토너먼트 상황을 결합한 토너먼트 텍사스 홀덤 상태
 #[derive(Clone, Debug)]
 pub struct TournamentHoldemState {
-    /// Base Hold'em game state
+    /// 기본 홀덤 게임 상태
     pub holdem_state: HoldemState,
 
-    /// Tournament context
+    /// 토너먼트 상황
     pub tournament_state: TournamentState,
 
-    /// Player positions in tournament (stack sizes, blind levels, etc.)
+    /// 토너먼트에서의 플레이어 포지션 (스택 크기, 블라인드 레벨 등)
     pub tournament_positions: Vec<TournamentPlayerPosition>,
 
-    /// ICM values for current situation
+    /// 현재 상황의 ICM 값
     pub icm_values: Vec<f64>,
 
-    /// Bubble pressure indicator
+    /// 버블 압박 지시자
     pub bubble_pressure: f64,
 }
 
@@ -34,7 +34,7 @@ pub struct TournamentPlayerPosition {
 }
 
 impl TournamentHoldemState {
-    /// Create new tournament hand
+    /// 새로운 토너먼트 핸드 생성
     pub fn new_tournament_hand(
         holdem_state: HoldemState,
         tournament_state: TournamentState,
@@ -79,7 +79,7 @@ impl TournamentHoldemState {
         }
     }
 
-    /// Calculate bubble pressure based on tournament stage
+    /// 토너먼트 단계에 기반한 버블 압박 계산
     fn calculate_bubble_pressure(tournament_state: &TournamentState, _stacks: &[u32]) -> f64 {
         let payout_spots = tournament_state.payout_structure.len() as u32;
         let players_remaining = tournament_state.players_remaining;
@@ -96,7 +96,7 @@ impl TournamentHoldemState {
         }
     }
 
-    /// Update ICM values after action
+    /// 액션 후 ICM 값 업데이트
     pub fn update_icm_after_action(&mut self, _action: &HoldemAction, _player: usize) {
         // Recalculate ICM values based on new stack distributions
         let current_stacks: Vec<u32> = self
@@ -129,7 +129,7 @@ impl GameState for TournamentHoldemState {
     }
 }
 
-/// Tournament-specific Texas Hold'em game that uses ICM-adjusted utilities
+/// ICM 조정 유틸리티를 사용하는 토너먼트 특화 텍사스 홀덤 게임
 #[derive(Clone)]
 pub struct TournamentHoldem {
     pub evaluator: TournamentEvaluator,
@@ -266,7 +266,7 @@ impl Game for TournamentHoldem {
 }
 
 impl TournamentHoldem {
-    /// Check if action is allowed in tournament context
+    /// 토너먼트 상황에서 액션이 허용되는지 확인
     fn is_action_allowed_in_tournament(
         action: &HoldemAction,
         state: &TournamentHoldemState,
@@ -290,14 +290,14 @@ impl TournamentHoldem {
     }
 }
 
-/// Tournament CFR trainer that incorporates ICM calculations
+/// ICM 계산을 통합한 토너먼트 CFR 훈련기
 pub struct TournamentCFRTrainer {
     pub base_trainer: Trainer<TournamentHoldem>,
     pub tournament_game: TournamentHoldem,
 }
 
 impl TournamentCFRTrainer {
-    /// Create new tournament CFR trainer
+    /// 새로운 토너먼트 CFR 훈련기 생성
     pub fn new(tournament_state: TournamentState, player_stacks: Vec<u32>) -> Self {
         let tournament_game = TournamentHoldem::new(tournament_state, player_stacks);
         let base_trainer = Trainer::new();
@@ -308,7 +308,7 @@ impl TournamentCFRTrainer {
         }
     }
 
-    /// Train tournament strategy with ICM considerations
+    /// ICM 고려사항과 함께 토너먼트 전략 훈련
     pub fn train_tournament_strategy(
         &mut self,
         iterations: usize,
@@ -325,7 +325,7 @@ impl TournamentCFRTrainer {
         println!("📈 Nodes created: {}", self.base_trainer.nodes.len());
     }
 
-    /// Get strategy for tournament situation
+    /// 토너먼트 상황에 대한 전략 가져오기
     pub fn get_tournament_strategy(
         &self,
         state: &TournamentHoldemState,
@@ -343,7 +343,7 @@ impl TournamentCFRTrainer {
         }
     }
 
-    /// Evaluate tournament decision with ICM considerations
+    /// ICM 고려사항과 함께 토너먼트 의사결정 평가
     pub fn evaluate_tournament_decision(
         &self,
         state: &TournamentHoldemState,

@@ -1,26 +1,26 @@
-// Integration of Tournament Features with CFR Training
+// 토너먼트 기능과 CFR 훈련의 통합
 use nice_hand_core::game::tournament::*;
 use nice_hand_core::solver::cfr_core::*;
 use nice_hand_core::game::holdem;
 use std::time::Instant;
 
 fn main() {
-    println!("=== Tournament-Aware CFR Training Demo ===\n");
+    println!("=== 토너먼트 인식 CFR 훈련 데모 ===\n");
     
     // Demo 1: Train CFR with tournament-specific evaluation
     demo_tournament_cfr_integration();
     
-    // Demo 2: Adaptive strategy based on tournament context
+    // 데모 2: 토너먼트 상황에 기반한 적응형 전략
     demo_adaptive_tournament_strategy();
     
-    // Demo 3: Real-time tournament decision making
+    // 데모 3: 실시간 토너먼트 의사결정
     demo_realtime_tournament_decisions();
     
     println!("\n=== Tournament CFR Integration Complete ===");
 }
 
 fn demo_tournament_cfr_integration() {
-    println!("🎯 CFR Training with Tournament Evaluation");
+    println!("🎯 토너먼트 평가와 함께하는 CFR 훈련");
     
     // Create tournament context
     let structure = TournamentStructure {
@@ -38,7 +38,7 @@ fn demo_tournament_cfr_integration() {
     
     let tournament_evaluator = TournamentEvaluator::new(tournament_state, player_stacks.clone());
     
-    // Create holdem game state for CFR training
+    // CFR 훈련을 위한 홀덤 게임 상태 생성
     let mut game_state = holdem::State::new(); // Creates 2-player heads-up game
     game_state.pot = 300;
     game_state.to_call = 150;
@@ -99,7 +99,7 @@ fn demo_adaptive_tournament_strategy() {
         let mut tournament_state = TournamentState::new(structure, 180, 500000);
         tournament_state.players_remaining = players_remaining;
         
-        // Calculate bubble strategy for different stack sizes
+        // 다양한 스택 크기에 대한 버블 전략 계산
         let bubble_strategy = BubbleStrategy::new(players_remaining, payout_spots);
         
         println!("      Players: {}, Paid: {}, Bubble factor: {:.3}", 
@@ -171,7 +171,7 @@ fn demo_realtime_tournament_decisions() {
         // Calculate ICM pressure
         let icm_pressure = evaluator.calculate_icm_adjusted_ev(player_idx, -1000);
         
-        // Get bubble strategy recommendation
+        // 버블 전략 추천 가져오기
         let bubble_strategy = BubbleStrategy::new(10, 9);
         let should_be_aggressive = bubble_strategy.should_make_aggressive_play(stack_ratio, icm_pressure.abs());
         

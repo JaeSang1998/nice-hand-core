@@ -4,7 +4,7 @@ use nice_hand_core::solver::ev_calculator::{EVCalculator, EVConfig};
 use nice_hand_core::game::card_abstraction::hand_strength;
 
 fn main() {
-    println!("🎯 Expected Value Calculator Demo");
+    println!("🎯 기댓값 계산기 데모");
     println!("=================================");
     
     // 테스트 시나리오 1: 프리플랍에서 강한 핸드 (Pocket Aces)
@@ -48,11 +48,11 @@ fn test_preflop_pocket_aces() {
         use_opponent_model: true,
     };
     
-    // EV 계산 실행
+// EV 계산 실행
     let calculator = EVCalculator::new(config);
     let ev_results = calculator.calculate_action_evs(&state);
     
-    println!("\n🎯 액션별 Expected Value:");
+    println!("\n🎯 액션별 기댓값:");
     for action_ev in &ev_results {
         println!("  {:?}: EV = {:.2}칩 (신뢰도: {:.1}%)", 
                  action_ev.action, action_ev.ev, action_ev.confidence * 100.0);
@@ -89,7 +89,7 @@ fn test_flop_top_pair() {
     let calculator = EVCalculator::new(config);
     let ev_results = calculator.calculate_action_evs(&state);
     
-    println!("\n🎯 액션별 Expected Value:");
+    println!("\n🎯 액션별 기댓값:");
     for action_ev in &ev_results {
         println!("  {:?}: EV = {:.2}칩 (신뢰도: {:.1}%)", 
                  action_ev.action, action_ev.ev, action_ev.confidence * 100.0);
@@ -121,7 +121,7 @@ fn test_turn_draw() {
     let calculator = EVCalculator::new(config);
     let ev_results = calculator.calculate_action_evs(&state);
     
-    println!("\n🎯 액션별 Expected Value:");
+    println!("\n🎯 액션별 기댓값:");
     for action_ev in &ev_results {
         println!("  {:?}: EV = {:.2}칩 (신뢰도: {:.1}%)", 
                  action_ev.action, action_ev.ev, action_ev.confidence * 100.0);
@@ -154,7 +154,7 @@ fn test_river_bluff_catcher() {
     let calculator = EVCalculator::new(config);
     let ev_results = calculator.calculate_action_evs(&state);
     
-    println!("\n🎯 액션별 Expected Value:");
+    println!("\n🎯 액션별 기댓값:");
     for action_ev in &ev_results {
         println!("  {:?}: EV = {:.2}칩 (신뢰도: {:.1}%)", 
                  action_ev.action, action_ev.ev, action_ev.confidence * 100.0);

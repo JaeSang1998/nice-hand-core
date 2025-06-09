@@ -86,8 +86,8 @@ fn feature_analysis() {
     println!("\n🧠 AI & Strategy Features:");
     println!("   ✅ Monte Carlo CFR");
     println!("   ✅ Advanced heuristic engine");
-    println!("   ✅ Real-time decision making");
-    println!("   ✅ Expected value calculations");
+    println!("   ✅ 실시간 의사결정");
+    println!("   ✅ 기댓값 계산");
     println!("   ❌ Opponent modeling");
     println!("   ❌ Range analysis");
     println!("   ❌ Exploitative strategies");

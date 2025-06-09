@@ -53,7 +53,7 @@ pub struct StrategyResponse {
     pub confidence: f64,
 }
 
-/// Pre-computed strategy lookup table
+/// 사전 계산된 전략 조회 테이블
 pub struct StrategyTable {
     /// 미리 계산된 전략들 (InfoKey -> Strategy)
     strategies: HashMap<u64, Vec<f64>>,
@@ -253,33 +253,33 @@ impl PokerWebAPI {
 pub struct OfflineTrainer;
 
 impl OfflineTrainer {
-    /// Train with a simple single scenario (fast for testing)
+    /// 단일 시나리오로 빠른 훈련 (테스트용)
     pub fn train_simple_strategy(iterations: usize) -> Trainer<holdem::State> {
         let mut trainer = Trainer::new();
 
-        // Use single scenario for fast testing
+        // 빠른 테스트를 위한 단일 시나리오 사용
         let scenarios = vec![holdem::State::new()];
 
-        // Run CFR training
+        // CFR 훈련 실행
         trainer.run(scenarios, iterations);
 
         trainer
     }
 
-    /// Train with comprehensive game scenarios (slower but more thorough)
+    /// 포괄적인 게임 시나리오로 훈련 (느리지만 더 철저함)
     pub fn train_comprehensive_strategy(iterations: usize) -> Trainer<holdem::State> {
         let mut trainer = Trainer::new();
 
-        // Use comprehensive training scenarios
+        // 포괄적인 훈련 시나리오 사용
         let scenarios = Self::generate_training_scenarios();
 
-        // Run CFR training
+        // CFR 훈련 실행
         trainer.run(scenarios, iterations);
 
         trainer
     }
 
-    /// Generate comprehensive training scenarios
+    /// 포괄적인 훈련 시나리오 생성
     fn generate_training_scenarios() -> Vec<holdem::State> {
         let mut scenarios = Vec::new();
 
@@ -296,11 +296,11 @@ impl OfflineTrainer {
     }
 
     fn generate_preflop_scenarios() -> Vec<holdem::State> {
-        // Generate various preflop situations
+        // 다양한 프리플랍 상황 생성
         vec![
-            // UTG open scenarios
+            // UTG 오픈 시나리오
             holdem::State {
-                hole: [[0, 13], [26, 39], [0, 0], [0, 0], [0, 0], [0, 0]], // AA vs random
+                hole: [[0, 13], [26, 39], [0, 0], [0, 0], [0, 0], [0, 0]], // AA vs 랜덤
                 board: vec![],
                 to_act: 0,
                 street: 0,
@@ -311,17 +311,17 @@ impl OfflineTrainer {
                 to_call: 50,
                 actions_taken: 0,
             },
-            // Add 3-bet scenarios, call scenarios, etc...
+            // 3벳 시나리오, 콜 시나리오 등 추가...
         ]
     }
 
     fn generate_postflop_scenarios() -> Vec<holdem::State> {
-        // Generate various flop/turn/river situations
+        // 다양한 플랍/턴/리버 상황 생성
         vec![
-            // Dry board scenarios
+            // 드라이 보드 시나리오
             holdem::State {
                 hole: [[0, 1], [26, 39], [0, 0], [0, 0], [0, 0], [0, 0]],
-                board: vec![48, 21, 6], // A-9-3 rainbow
+                board: vec![48, 21, 6], // A-9-3 레인보우
                 to_act: 0,
                 street: 1,
                 pot: 200,
@@ -331,12 +331,12 @@ impl OfflineTrainer {
                 to_call: 0,
                 actions_taken: 0,
             },
-            // Add wet board scenarios, etc...
+            // 웻 보드 시나리오 등 추가...
         ]
     }
 
     fn generate_special_scenarios() -> Vec<holdem::State> {
-        // Generate ICM, short stack, bubble situations
+        // ICM, 숏스택, 버블 상황 생성
         vec![
             // Bubble play
             holdem::State {
@@ -387,7 +387,7 @@ mod tests {
         // 응답 검증
         assert!(!response.strategy.is_empty());
         assert!(!response.recommended_action.is_empty());
-        println!("Strategy response: {:?}", response);
+        println!("전략 응답: {:?}", response);
     }
 
     #[test]

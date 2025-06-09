@@ -1,18 +1,18 @@
-// Advanced Heuristic Strategy Demonstration
+// 고급 휴리스틱 전략 데모
 use nice_hand_core::web_api_simple::{QuickPokerAPI, WebGameState};
 
 fn main() {
-    println!("🃏 Advanced Poker Heuristic Strategy Demo");
+    println!("🃏 고급 포커 휴리스틱 전략 데모");
     println!("=========================================");
     
     let api = QuickPokerAPI::new();
     
-    // Test scenario 1: Premium preflop hand
-    println!("\n📋 Scenario 1: Premium Preflop Hand (AA)");
+    // 테스트 시나리오 1: 프리미엄 프리플롭 핸드
+    println!("\n📋 시나리오 1: 프리미엄 프리플롭 핸드 (AA)");
     println!("-{}", "-".repeat(49));
     
     let premium_state = WebGameState {
-        hole_cards: [0, 13], // AA (Ace of Spades, Ace of Hearts)
+        hole_cards: [0, 13], // AA (스페이드 에이스, 하트 에이스)
         board: vec![],
         street: 0,
         pot: 150,
@@ -22,17 +22,17 @@ fn main() {
     };
     
     let response = api.get_optimal_strategy(premium_state);
-    println!("🎯 Recommended Action: {}", response.recommended_action);
-    println!("💪 Hand Strength: {:.1}%", response.hand_strength * 100.0);
-    println!("📊 Expected Value: {:.1} chips", response.expected_value);
-    println!("🧠 Reasoning: {}", response.reasoning);
+    println!("🎯 권장 액션: {}", response.recommended_action);
+    println!("💪 핸드 강도: {:.1}%", response.hand_strength * 100.0);
+    println!("📊 기댓값: {:.1} 칩", response.expected_value);
+    println!("🧠 추론: {}", response.reasoning);
     
-    // Test scenario 2: Marginal calling hand
-    println!("\n📋 Scenario 2: Marginal Calling Hand (KQ offsuit)");
+    // 테스트 시나리오 2: 경계선 콜링 핸드
+    println!("\n📋 시나리오 2: 경계선 콜링 핸드 (KQ 오프수트)");
     println!("-{}", "-".repeat(49));
     
     let marginal_state = WebGameState {
-        hole_cards: [11, 23], // KQ offsuit
+        hole_cards: [11, 23], // KQ 오프수트
         board: vec![],
         street: 0,
         pot: 200,
@@ -42,33 +42,33 @@ fn main() {
     };
     
     let response2 = api.get_optimal_strategy(marginal_state);
-    println!("🎯 Recommended Action: {}", response2.recommended_action);
-    println!("💪 Hand Strength: {:.1}%", response2.hand_strength * 100.0);
-    println!("📊 Expected Value: {:.1} chips", response2.expected_value);
-    println!("🧠 Reasoning: {}", response2.reasoning);
+    println!("🎯 권장 액션: {}", response2.recommended_action);
+    println!("💪 핸드 강도: {:.1}%", response2.hand_strength * 100.0);
+    println!("📊 기댓값: {:.1} 칩", response2.expected_value);
+    println!("🧠 추론: {}", response2.reasoning);
     
-    // Test scenario 3: Strong postflop hand (top pair)
-    println!("\n📋 Scenario 3: Strong Postflop Hand (Top Pair)");
+    // 테스트 시나리오 3: 강한 포스트플롭 핸드 (탑 페어)
+    println!("\n📋 시나리오 3: 강한 포스트플롭 핸드 (탑 페어)");
     println!("-{}", "-".repeat(49));
     
     let postflop_state = WebGameState {
         hole_cards: [0, 26], // A♠ K♠
-        board: vec![1, 21, 34], // A♥ 9♠ J♥ - Top pair with great kicker
+        board: vec![1, 21, 34], // A♥ 9♠ J♥ - 훌륭한 키커를 가진 탑 페어
         street: 1,
         pot: 300,
-        to_call: 0, // Checking to us
+        to_call: 0, // 우리에게 체크
         my_stack: 700,
         opponent_stack: 700,
     };
     
     let response3 = api.get_optimal_strategy(postflop_state);
-    println!("🎯 Recommended Action: {}", response3.recommended_action);
-    println!("💪 Hand Strength: {:.1}%", response3.hand_strength * 100.0);
-    println!("📊 Expected Value: {:.1} chips", response3.expected_value);
-    println!("🧠 Reasoning: {}", response3.reasoning);
+    println!("🎯 권장 액션: {}", response3.recommended_action);
+    println!("💪 핸드 강도: {:.1}%", response3.hand_strength * 100.0);
+    println!("📊 기댓값: {:.1} 칩", response3.expected_value);
+    println!("🧠 추론: {}", response3.reasoning);
     
-    // Performance test
-    println!("\n📊 Performance Analysis");
+    // 성능 테스트
+    println!("\n📊 성능 분석");
     println!("-{}", "-".repeat(49));
     
     let start = std::time::Instant::now();
@@ -87,12 +87,12 @@ fn main() {
     let _responses = api.get_strategies_batch(test_states);
     let duration = start.elapsed();
     
-    println!("✅ Processed 1,000 decisions in {:?}", duration);
-    println!("⚡ Average: {:.2}μs per decision", duration.as_micros() as f64 / 1000.0);
+    println!("✅ 1,000개 결정을 {:?}에 처리", duration);
+    println!("⚡ 평균: 결정당 {:.2}μs", duration.as_micros() as f64 / 1000.0);
     
-    println!("\n🎯 Heuristic Enhancement Complete!");
-    println!("   ✓ Sophisticated hand evaluation");
-    println!("   ✓ Advanced betting strategies");
-    println!("   ✓ Context-aware decision making");
-    println!("   ✓ Production-ready performance");
+    println!("\n🎯 휴리스틱 향상 완료!");
+    println!("   ✓ 정교한 핸드 평가");
+    println!("   ✓ 고급 베팅 전략");
+    println!("   ✓ 맥락 인식 의사결정");
+    println!("   ✓ 운영 준비 성능");
 }

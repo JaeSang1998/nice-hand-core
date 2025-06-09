@@ -137,7 +137,7 @@ impl Node {
         }
     }
 
-    /// Update regret sum for action i (CFR+ version)
+    /// 액션 i의 리그렛 합계 업데이트 (CFR+ 버전)
     /// CFR+: 누적 후회값이 음수가 되지 않도록 보장
     pub fn update_regret(&mut self, action_idx: usize, value: f64) {
         if action_idx < self.regret_sum.len() {
@@ -145,7 +145,7 @@ impl Node {
         }
     }
 
-    /// Update strategy sum for action i
+    /// 액션 i의 전략 합계 업데이트
     pub fn update_strategy(&mut self, action_idx: usize, value: f64) {
         if action_idx < self.strat_sum.len() {
             self.strat_sum[action_idx] += value;
@@ -199,7 +199,7 @@ impl<G: Game> Trainer<G> {
     /// trainer.run(vec![initial_state], 10);
     /// ```
     pub fn run(&mut self, roots: Vec<G::State>, iterations: usize) {
-        // Only log start/end for performance - detailed logging was causing major slowdown
+        // 성능을 위해 시작/종료만 로그 - 상세 로깅이 큰 속도 저하를 일으킴
         println!(
             "📚 CFR 학습 시작 - {} 시나리오, {} 반복",
             roots.len(),
@@ -207,7 +207,7 @@ impl<G: Game> Trainer<G> {
         );
 
         for iteration in 0..iterations {
-            // Log only every 10th iteration to reduce console overhead
+            // 콘솔 오버헤드를 줄이기 위해 10번째마다만 로그
             if iteration % 10 == 0 || iteration == iterations - 1 {
                 println!("  반복 {}/{} 진행 중...", iteration + 1, iterations);
             }
@@ -217,7 +217,7 @@ impl<G: Game> Trainer<G> {
                     TL_DATA.with(|tl| {
                         let mut tl = tl.borrow_mut();
                         let _result = self.cfr(root, hero, 1.0, &mut tl.rng);
-                        // Removed per-player logging for performance
+                        // 성능을 위해 플레이어별 로깅 제거
                     });
                 }
             }

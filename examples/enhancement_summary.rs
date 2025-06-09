@@ -1,7 +1,7 @@
 use nice_hand_core::game::tournament::*;
 
 fn main() {
-    println!("=== Tournament Finish Probability Enhancement Summary ===\n");
+    println!("=== 토너먼트 마무리 확률 강화 요약 ===\n");
     
     // Create test scenario
     let stacks = vec![5000, 3000, 1500, 500];
@@ -14,7 +14,7 @@ fn main() {
     println!("3. ✅ Enhanced calculate_finish_probability_exact() - advanced tournament modeling");
     println!("4. ✅ Added comprehensive tournament dynamics");
     println!("5. ✅ Added ICM pressure calculations");
-    println!("6. ✅ Added bubble strategy modeling");
+    println!("6. ✅ 버블 전략 모델링 추가");
     println!("7. ✅ Added opponent modeling framework");
     println!("8. ✅ Added MTT management system\n");
     
@@ -41,8 +41,8 @@ fn main() {
                 i + 1, stack, pressure_gain, pressure_loss);
     }
     
-    // Show advanced finish probability features
-    println!("\n🎲 ADVANCED FINISH PROBABILITY FEATURES:");
+    // 고급 마무리 확률 기능 보여주기
+    println!("\n🎲 고급 마무리 확률 기능:");
     let remaining_players: Vec<usize> = (0..stacks.len()).collect();
     
     // Test different scenarios
@@ -85,13 +85,13 @@ fn main() {
     println!("✅ All three requested functions have been enhanced with realistic implementations");
     println!("✅ Code compiles successfully and runs without errors");
     println!("✅ Tournament modeling now includes advanced game theory concepts");
-    println!("✅ Comprehensive framework for tournament AI decision making");
+    println!("✅ 토너먼트 AI 의사결정을 위한 포괄적 프레임워크");
     
     println!("\n📚 KEY IMPROVEMENTS MADE:");
     println!("1. evaluate_terminal_state: Multi-opponent showdown calculation with proper investment analysis");
     println!("2. select_opponent_action: Sophisticated decision tree with pot odds, position, and stack pressure");
     println!("3. calculate_finish_probability: Advanced Dirichlet-Multinomial modeling with tournament dynamics");
-    println!("4. Added supporting infrastructure: ICM calculations, opponent modeling, bubble strategy");
+    println!("4. 지원 인프라 추가: ICM 계산, 상대 모델링, 버블 전략");
     
     println!("\n🎮 READY FOR PRODUCTION USE!");
 }

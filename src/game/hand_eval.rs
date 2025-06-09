@@ -43,16 +43,16 @@ pub fn v7(cards: [u8; 7]) -> u32 {
         }
     }
     
-    // Debug output for one pair test case
+    // 원 페어 테스트 케이스를 위한 디버그 출력
     if best_rank >= 32488 && cards.contains(&0) && cards.contains(&13) {
-        println!("Debug best hand for As-Ah case: {:?} -> {}", 
+        println!("As-Ah 케이스의 최고 핸드 디버그: {:?} -> {}", 
                 best_hand.iter().map(|&c| card_to_string(c)).collect::<Vec<_>>(), 
                 rank_to_string(best_rank));
         
         // Test what a pair of Aces evaluates to
         let ace_pair_hand = [0, 13, 14, 29, 44]; // As Ah 2h 4d 6c
         let ace_pair_rank = evaluate_5cards(ace_pair_hand);
-        println!("Ace pair test: {:?} -> rank {} ({})", 
+        println!("에이스 페어 테스트: {:?} -> 랭크 {} ({})", 
                 ace_pair_hand.iter().map(|&c| card_to_string(c)).collect::<Vec<_>>(),
                 ace_pair_rank, rank_to_string(ace_pair_rank));
     }
@@ -309,7 +309,7 @@ mod tests {
         
         // 테스트 케이스 7: 원페어 (As Ah + 낮은 카드들로 확실하게)
         let one_pair = [0, 13, 1+13, 3+26, 5+39, 7+13, 9+26]; // As Ah + 2,4,6,8,10 (스트레이트 불가능)
-        println!("One pair test cards: {:?}", one_pair.iter().map(|&c| card_to_string(c)).collect::<Vec<_>>());
+        println!("원 페어 테스트 카드: {:?}", one_pair.iter().map(|&c| card_to_string(c)).collect::<Vec<_>>());
         let rank = v7(one_pair);
         println!("원페어 랭크: {}, 타입: {}", rank, rank_to_string(rank));
         assert!(rank >= 21294 && rank <= 32487, "원페어여야 함");

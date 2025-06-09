@@ -1,5 +1,5 @@
 // Tournament-CFR Integration Complete Demo
-// Demonstrates real-time tournament decision making with CFR strategies
+// CFR 전략과 함께하는 실시간 토너먼트 의사결정을 보여줍니다
 
 use nice_hand_core::{
     TournamentHoldem, TournamentHoldemState, TournamentCFRTrainer,
@@ -25,7 +25,7 @@ fn main() {
     // Phase 4: CFR training integration
     demo_cfr_integration();
     
-    // Phase 5: Real-time decision making
+    // Phase 5: 실시간 의사결정
     demo_realtime_decisions();
     
     println!("\n🎉 Tournament-CFR Integration Demo Complete!");

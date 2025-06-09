@@ -1,9 +1,9 @@
 use nice_hand_core::game::tournament::*;
 use std::collections::HashMap;
 
-/// Blind Structure Optimizer
+/// 블라인드 구조 최적화기
 /// 
-/// This example demonstrates:
+/// 이 예제는 다음을 보여줍니다:
 /// - Optimal blind structure generation for different tournament types
 /// - Analysis of blind progression impact on tournament dynamics
 /// - Customization for various tournament lengths and player counts

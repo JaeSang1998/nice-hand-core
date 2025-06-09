@@ -477,7 +477,7 @@ impl ICMCalculator {
         raw_probability.min(1.0).max(0.0)
     }
 
-    /// Calculate base finish probability using Dirichlet-Multinomial model
+    /// 디리클레-다항분포 모델을 사용하여 기본 마무리 확률 계산
     fn calculate_base_finish_probability(
         &self,
         stack_ratio: f64,
@@ -1036,7 +1036,7 @@ impl TournamentEvaluator {
         model.update_with_action(&action, &context);
     }
 
-    /// Calculate ICM-adjusted expected value for a decision
+    /// 의사결정에 대한 ICM 조정 기댓값 계산
     pub fn calculate_icm_adjusted_ev(&self, player_idx: usize, chip_change: i32) -> f64 {
         self.icm_calculator
             .calculate_icm_pressure(player_idx, chip_change)
@@ -1326,7 +1326,7 @@ impl MTTTable {
     }
 }
 
-/// Advanced bubble strategy calculator
+/// 고급 버블 전략 계산기
 #[derive(Debug, Clone)]
 pub struct BubbleStrategy {
     pub bubble_factor: f64,      // How close to bubble (0.0 to 1.0)

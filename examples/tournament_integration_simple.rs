@@ -3,16 +3,16 @@ use nice_hand_core::game::tournament::*;
 use std::time::Instant;
 
 fn main() {
-    println!("=== Tournament CFR Integration Demo ===\n");
+    println!("=== 토너먼트 CFR 통합 데모 ===\n");
     
     tournament_strategy_demo();
     performance_benchmark();
     
-    println!("✅ Tournament integration complete!");
+    println!("✅ 토너먼트 통합 완료!");
 }
 
 fn tournament_strategy_demo() {
-    println!("🎯 Tournament Strategy Adaptation");
+    println!("🎯 토너먼트 전략 적응");
     
     // Create bubble scenario
     let structure = TournamentStructure {
@@ -35,7 +35,7 @@ fn tournament_strategy_demo() {
         ("Chip leader", 40000),
     ];
     
-    println!("   Bubble situation (19 players, 18 paid):");
+    println!("   버블 상황 (19명 플레이어, 18명 상금):");
     
     for (desc, stack) in scenarios {
         let strategy = TournamentStrategy::new(&tournament_state, stack);
@@ -48,11 +48,11 @@ fn tournament_strategy_demo() {
                 adjusted.iter().map(|x| format!("{:.2}", x)).collect::<Vec<_>>());
     }
     
-    println!("   ✅ Strategy adjusts correctly for tournament context\n");
+    println!("   ✅ 전략이 토너먼트 맥락에 맞게 올바르게 조정됨\n");
 }
 
 fn performance_benchmark() {
-    println!("⚡ Performance Benchmark");
+    println!("⚡ 성능 벤치마크");
     
     let stacks = vec![15000, 12000, 8000, 5000, 3000];
     let payouts = vec![50000, 30000, 20000, 15000, 10000];
@@ -70,10 +70,10 @@ fn performance_benchmark() {
     let duration = start.elapsed();
     let per_calculation = duration.as_micros() as f64 / iterations as f64;
     
-    println!("   📊 ICM Performance:");
-    println!("      {} calculations in {:?}", iterations, duration);
-    println!("      Average: {:.2}μs per calculation", per_calculation);
-    println!("      Throughput: {:.0} calculations/second", 1_000_000.0 / per_calculation);
+    println!("   📊 ICM 성능:");
+    println!("      {:?}에 {} 계산", duration, iterations);
+    println!("      평균: 계산당 {:.2}μs", per_calculation);
+    println!("      처리량: 초당 {:.0} 계산", 1_000_000.0 / per_calculation);
     
     // Benchmark opponent modeling
     let mut model = OpponentModel::new(1);

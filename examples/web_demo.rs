@@ -1,23 +1,23 @@
-// Simple stateless web API demo for Texas Hold'em
+// 텍사스 홀덤용 간단한 무상태 웹 API 데모
 use nice_hand_core::web_api_simple::*;
 
 fn main() {
-    println!("🚀 Texas Hold'em Simple Web API Demo");
+    println!("🚀 텍사스 홀덤 간단한 웹 API 데모");
     println!("====================================");
-    println!("✨ No training required - instant responses!");
+    println!("✨ 훈련 불필요 - 즉시 응답!");
     
-    // Initialize the quick API (no training needed)
-    println!("\n🌐 Initializing Quick Poker API...");
+    // 빠른 API 초기화 (훈련 불필요)
+    println!("\n🌐 빠른 포커 API 초기화 중...");
     let api = QuickPokerAPI::new();
-    println!("✅ API ready for requests instantly");
+    println!("✅ API가 즉시 요청 처리 준비 완료");
     
-    // Simulate web requests
-    println!("\n📡 Simulating Web Requests...");
+    // 웹 요청 시뮬레이션
+    println!("\n📡 웹 요청 시뮬레이션...");
     
-    // Request 1: Preflop with pocket aces
-    println!("\n🃏 Request 1: Preflop with Pocket Aces");
+    // 요청 1: 포켓 에이스를 가진 프리플랍
+    println!("\n🃏 요청 1: 포켓 에이스를 가진 프리플랍");
     let request1 = WebGameState {
-        hole_cards: [12, 25], // AA (Ace of spades, Ace of hearts)
+        hole_cards: [12, 25], // AA (스페이드 에이스, 하트 에이스)
         board: vec![],
         street: 0,
         pot: 150,
@@ -30,16 +30,16 @@ fn main() {
     let response1 = api.get_optimal_strategy(request1);
     let response_time = start_time.elapsed();
     
-    println!("💡 Recommended action: {}", response1.recommended_action);
-    println!("📊 Action probabilities:");
+    println!("💡 추천 액션: {}", response1.recommended_action);
+    println!("📊 액션 확률:");
     for (action, prob) in &response1.strategy {
         println!("   {}: {:.1}%", action, prob * 100.0);
     }
-    println!("🎯 Expected value: {:.2}", response1.expected_value);
-    println!("⚡ Response time: {:?}", response_time);
+    println!("🎯 기댓값: {:.2}", response1.expected_value);
+    println!("⚡ 응답 시간: {:?}", response_time);
     
-    // Request 2: Flop with top pair
-    println!("\n🃏 Request 2: Flop with Top Pair");
+    // 요청 2: 탑 페어가 있는 플랍
+    println!("\n🃏 요청 2: 탑 페어가 있는 플랍");
     let request2 = WebGameState {
         hole_cards: [12, 7], // A♠ 8♦ 
         board: vec![25, 1, 14], // A♥ 3♠ 2♦
@@ -54,16 +54,16 @@ fn main() {
     let response2 = api.get_optimal_strategy(request2);
     let response_time = start_time.elapsed();
     
-    println!("💡 Recommended action: {}", response2.recommended_action);
-    println!("📊 Action probabilities:");
+    println!("💡 추천 액션: {}", response2.recommended_action);
+    println!("📊 액션 확률:");
     for (action, prob) in &response2.strategy {
         println!("   {}: {:.1}%", action, prob * 100.0);
     }
-    println!("🎯 Expected value: {:.2}", response2.expected_value);
-    println!("⚡ Response time: {:?}", response_time);
+    println!("🎯 기댓값: {:.2}", response2.expected_value);
+    println!("⚡ 응답 시간: {:?}", response_time);
     
-    // Request 3: Turn with flush draw
-    println!("\n🃏 Request 3: Turn with Flush Draw");
+    // 요청 3: 플러시 드로우가 있는 턴
+    println!("\n🃏 요청 3: 플러시 드로우가 있는 턴");
     let request3 = WebGameState {
         hole_cards: [12, 11], // A♠ K♠
         board: vec![25, 1, 14, 10], // A♥ 3♠ 2♦ J♠
@@ -78,16 +78,16 @@ fn main() {
     let response3 = api.get_optimal_strategy(request3);
     let response_time = start_time.elapsed();
     
-    println!("💡 Recommended action: {}", response3.recommended_action);
-    println!("📊 Action probabilities:");
+    println!("💡 추천 액션: {}", response3.recommended_action);
+    println!("📊 액션 확률:");
     for (action, prob) in &response3.strategy {
         println!("   {}: {:.1}%", action, prob * 100.0);
     }
-    println!("🎯 Expected value: {:.2}", response3.expected_value);
-    println!("⚡ Response time: {:?}", response_time);
+    println!("🎯 기댓값: {:.2}", response3.expected_value);
+    println!("⚡ 응답 시간: {:?}", response_time);
     
-    // Performance test with multiple requests
-    println!("\n⚡ Performance Test: 100 Requests");
+    // 여러 요청으로 성능 테스트
+    println!("\n⚡ 성능 테스트: 100회 요청");
     let perf_request = WebGameState {
         hole_cards: [8, 21], // J♠ 9♥
         board: vec![],
@@ -105,23 +105,23 @@ fn main() {
     let total_time = perf_start.elapsed();
     let avg_time = total_time / 100;
     
-    println!("🚀 100 requests completed in {:?}", total_time);
-    println!("📊 Average response time: {:?}", avg_time);
-    println!("🔥 Requests per second: {:.0}", 1.0 / avg_time.as_secs_f64());
+    println!("🚀 100회 요청이 {:?}에 완료됨", total_time);
+    println!("📊 평균 응답 시간: {:?}", avg_time);
+    println!("🔥 초당 요청 수: {:.0}", 1.0 / avg_time.as_secs_f64());
     
-    // Summary
-    println!("\n📋 Summary");
+    // 요약
+    println!("\n📋 요약");
     println!("=========");
-    println!("✅ Simple API works without any training");
-    println!("✅ Stateless requests work correctly");
-    println!("✅ Sub-millisecond response times");
-    println!("✅ Ready for immediate production use");
-    println!("✅ Heuristic-based strategy suitable for casual play");
+    println!("✅ 간단한 API가 훈련 없이 작동");
+    println!("✅ 무상태 요청이 올바르게 작동");
+    println!("✅ 서브 밀리초 응답 시간");
+    println!("✅ 즉시 프로덕션 사용 준비");
+    println!("✅ 캐주얼 플레이에 적합한 휴리스틱 기반 전략");
     
-    println!("\n🎯 Web Server Integration:");
-    println!("   1. Initialize QuickPokerAPI::new() at server startup");
-    println!("   2. Handle HTTP requests with get_strategy()");
-    println!("   3. Each request is completely independent (stateless)");
-    println!("   4. No training or pre-computation required");
-    println!("   5. Perfect for real-time poker applications");
+    println!("\n🎯 웹 서버 통합:");
+    println!("   1. 서버 시작 시 QuickPokerAPI::new() 초기화");
+    println!("   2. get_strategy()로 HTTP 요청 처리");
+    println!("   3. 각 요청은 완전히 독립적 (무상태)");
+    println!("   4. 훈련이나 사전 계산 불필요");
+    println!("   5. 실시간 포커 애플리케이션에 완벽");
 }
