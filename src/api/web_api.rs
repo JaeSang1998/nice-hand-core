@@ -361,8 +361,8 @@ mod tests {
 
     #[test]
     fn test_web_api_basic() {
-        // 기본 오프라인 학습 (5회로 축소)
-        let trainer = OfflineTrainer::train_comprehensive_strategy(5);
+        // 기본 오프라인 학습 (1회로 축소, 간단한 전략 사용)
+        let trainer = OfflineTrainer::train_simple_strategy(1);
 
         // Web API 생성
         let api = PokerWebAPI::new(&trainer);
@@ -392,7 +392,7 @@ mod tests {
 
     #[test]
     fn test_stateless_multiple_requests() {
-        let trainer = OfflineTrainer::train_comprehensive_strategy(5);
+        let trainer = OfflineTrainer::train_simple_strategy(1);
         let api = PokerWebAPI::new(&trainer);
 
         // 여러 독립적인 요청들

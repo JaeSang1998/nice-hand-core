@@ -117,3 +117,14 @@ pub fn test_mtt_management() {
     
     println!("   ✅ MTT management working correctly\n");
 }
+
+fn main() {
+    println!("=== Tournament Test Functions ===\n");
+    
+    test_bubble_icm();
+    test_heads_up_icm();
+    test_opponent_modeling();
+    test_mtt_management();
+    
+    println!("All tournament tests completed!");
+}

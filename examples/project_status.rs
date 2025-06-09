@@ -15,7 +15,7 @@ fn current_capabilities_demo() {
     
     // CFR Training Demo
     let start = Instant::now();
-    let (trainer, _) = cfr_quick_train(10);
+    let trainer = api::web_api::OfflineTrainer::train_simple_strategy(10);
     let cfr_time = start.elapsed();
     
     println!("🧠 CFR Training: {} nodes in {:?}", trainer.nodes.len(), cfr_time);
@@ -25,23 +25,23 @@ fn current_capabilities_demo() {
     let api = api::web_api_simple::QuickPokerAPI::new();
     let init_time = start.elapsed();
     
-    let state = api::web_api_simple::PokerState {
-        hole_cards: vec!["As".to_string(), "Ah".to_string()],
-        community_cards: vec!["Kh".to_string(), "Qd".to_string(), "Jc".to_string()],
-        pot_size: 100,
-        bet_to_call: 50,
-        position: "BTN".to_string(),
-        stack_size: 1000,
-        num_opponents: 2,
+    let state = api::web_api_simple::WebGameState {
+        hole_cards: [52, 53], // As, Ah (example values)
+        board: vec![12, 25, 38], // Kh, Qd, Jc (example values)
+        street: 1, // Flop
+        pot: 100,
+        to_call: 50,
+        my_stack: 1000,
+        opponent_stack: 1000,
     };
     
-    let result = api.get_strategy(&state);
+    let result = api.get_optimal_strategy(state.clone());
     println!("🌐 Web API: Init in {:?}, Action: {}", init_time, result.recommended_action);
     
     // Performance Test
     let start = Instant::now();
     for _ in 0..100 {
-        let _ = api.get_strategy(&state);
+        let _ = api.get_optimal_strategy(state.clone());
     }
     let perf_time = start.elapsed();
     

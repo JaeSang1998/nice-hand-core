@@ -34,7 +34,7 @@ fn performance_benchmark() {
     let start = Instant::now();
     
     // Test CFR training performance
-    let (trainer, _) = cfr_quick_train(25);
+    let trainer = api::web_api::OfflineTrainer::train_simple_strategy(25);
     let cfr_time = start.elapsed();
     
     println!("✅ CFR Training (25 iterations): {:?}", cfr_time);
@@ -53,17 +53,17 @@ fn performance_benchmark() {
     let iterations = 1000;
     
     for _ in 0..iterations {
-        let state = api::web_api_simple::PokerState {
-            hole_cards: vec!["As".to_string(), "Ah".to_string()],
-            community_cards: vec!["Kh".to_string(), "Qd".to_string(), "Jc".to_string()],
-            pot_size: 100,
-            bet_to_call: 50,
-            position: "BTN".to_string(),
-            stack_size: 1000,
-            num_opponents: 2,
+        let state = api::web_api_simple::WebGameState {
+            hole_cards: [52, 53], // As, Ah (example values)
+            board: vec![12, 25, 38], // Kh, Qd, Jc (example values)
+            street: 1, // Flop
+            pot: 100,
+            to_call: 50,
+            my_stack: 1000,
+            opponent_stack: 1000,
         };
         
-        let _ = api.get_strategy(&state);
+        let _ = api.get_optimal_strategy(state);
     }
     
     let api_time = start.elapsed();
@@ -76,7 +76,12 @@ fn performance_benchmark() {
 
 fn feature_analysis() {
     println!("🎮 Game Engine Features:");
-    println!("   ✅ Texas Hold'em (6-max No-Limit)");\n    println!("   ✅ Complete hand evaluation (7-card)");\n    println!("   ✅ Card abstraction & bucketing");\n    println!("   ❌ Tournament support (ICM, blinds)");\n    println!("   ❌ Pot-Limit Omaha");\n    println!("   ❌ Short-deck Hold'em");
+    println!("   ✅ Texas Hold'em (6-max No-Limit)");
+    println!("   ✅ Complete hand evaluation (7-card)");
+    println!("   ✅ Card abstraction & bucketing");
+    println!("   ❌ Tournament support (ICM, blinds)");
+    println!("   ❌ Pot-Limit Omaha");
+    println!("   ❌ Short-deck Hold'em");
     
     println!("\n🧠 AI & Strategy Features:");
     println!("   ✅ Monte Carlo CFR");
@@ -107,49 +112,52 @@ fn api_demo() {
     let api = api::web_api_simple::QuickPokerAPI::new();
     
     // Demo 1: Premium preflop hand
-    let premium_hand = api::web_api_simple::PokerState {
-        hole_cards: vec!["As".to_string(), "Ad".to_string()],
-        community_cards: vec![],
-        pot_size: 30,
-        bet_to_call: 15,
-        position: "BTN".to_string(),
-        stack_size: 1000,
-        num_opponents: 3,
+    let premium_hand = api::web_api_simple::WebGameState {
+        hole_cards: [52, 53], // As, Ad (example values)
+        board: vec![],
+        street: 0, // Preflop
+        pot: 30,
+        to_call: 15,
+        my_stack: 1000,
+        opponent_stack: 1000,
     };
     
-    let result = api.get_strategy(&premium_hand);
+    let result = api.get_optimal_strategy(premium_hand.clone());
     println!("🃏 Premium Hand (AA) Preflop:");
     println!("   Action: {}", result.recommended_action);
     println!("   EV: {:.1}", result.expected_value);
     println!("   Strategy: fold:{:.1}% call:{:.1}% raise:{:.1}%", 
-             result.action_probabilities.get("fold").unwrap_or(&0.0) * 100.0,
-             result.action_probabilities.get("call").unwrap_or(&0.0) * 100.0,
-             result.action_probabilities.get("raise").unwrap_or(&0.0) * 100.0);
+             result.strategy.get("fold").unwrap_or(&0.0) * 100.0,
+             result.strategy.get("call").unwrap_or(&0.0) * 100.0,
+             result.strategy.get("raise").unwrap_or(&0.0) * 100.0);
     
     // Demo 2: Marginal postflop hand
-    let marginal_hand = api::web_api_simple::PokerState {
-        hole_cards: vec!["Kh".to_string(), "Qd".to_string()],
-        community_cards: vec!["Ac".to_string(), "9s".to_string(), "5h".to_string()],
-        pot_size: 120,
-        bet_to_call: 80,
-        position: "SB".to_string(),
-        stack_size: 600,
-        num_opponents: 1,
+    let marginal_hand = api::web_api_simple::WebGameState {
+        hole_cards: [12, 25], // Kh, Qd (example values)
+        board: vec![52, 35, 17], // Ac, 9s, 5h (example values)
+        street: 1, // Flop
+        pot: 120,
+        to_call: 80,
+        my_stack: 600,
+        opponent_stack: 800,
     };
     
-    let result = api.get_strategy(&marginal_hand);
+    let result = api.get_optimal_strategy(marginal_hand.clone());
     println!("\n🃏 Marginal Hand (KQ) vs Ace-high flop:");
     println!("   Action: {}", result.recommended_action);
     println!("   EV: {:.1}", result.expected_value);
     println!("   Strategy: fold:{:.1}% call:{:.1}% raise:{:.1}%", 
-             result.action_probabilities.get("fold").unwrap_or(&0.0) * 100.0,
-             result.action_probabilities.get("call").unwrap_or(&0.0) * 100.0,
-             result.action_probabilities.get("raise").unwrap_or(&0.0) * 100.0);
+             result.strategy.get("fold").unwrap_or(&0.0) * 100.0,
+             result.strategy.get("call").unwrap_or(&0.0) * 100.0,
+             result.strategy.get("raise").unwrap_or(&0.0) * 100.0);
     
-    // Demo 3: Batch processing
+    // Demo 3: Batch processing simulation
     let start = Instant::now();
     let batch_states = vec![premium_hand.clone(), marginal_hand.clone()];
-    let batch_results = api.batch_analyze(&batch_states);
+    let mut batch_results = Vec::new();
+    for state in batch_states {
+        batch_results.push(api.get_optimal_strategy(state));
+    }
     let batch_time = start.elapsed();
     
     println!("\n📦 Batch Processing (2 hands): {:?}", batch_time);

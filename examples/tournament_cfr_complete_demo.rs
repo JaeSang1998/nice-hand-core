@@ -4,8 +4,8 @@
 use nice_hand_core::{
     TournamentHoldem, TournamentHoldemState, TournamentCFRTrainer,
     game::tournament::{TournamentState, TournamentStructure, BlindLevel},
-    game::holdem::{State as HoldemState, Act as HoldemAction},
-    solver::cfr_core::{Game, Trainer},
+    game::holdem::State as HoldemState,
+    solver::cfr_core::Game,
 };
 use std::time::Instant;
 
