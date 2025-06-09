@@ -244,6 +244,197 @@ pub mod wasm_bridge {
     }
 }
 
+// ----------------------- 새로운 고급 분석 함수들 -----------------------
+
+/// 포괄적인 포커 상황 분석 (새로운 고급 API)
+/// 
+/// # 매개변수
+/// * `web_state` - 현재 게임 상태 (JSON으로 직렬화 가능)
+/// * `analysis_depth` - 분석 깊이 ("quick", "standard", "deep")
+/// * `include_insights` - 인사이트 포함 여부
+/// 
+/// # 반환값
+/// 포괄적인 분석 결과 (EV, 추천 액션, 리스크 평가 등)
+/// 
+/// # 예제
+/// ```
+/// use nice_hand_core::{analyze_comprehensive, api::web_api::WebGameState};
+/// 
+/// // 게임 상태 구성
+/// let web_state = WebGameState {
+///     hole_cards: [0, 13], // AA
+///     board: vec![],        // 프리플랍
+///     street: 0,
+///     pot: 150,
+///     stacks: vec![1000, 1000], // 2명 플레이어
+///     alive_players: vec![0, 1],
+///     street_investments: vec![50, 100], // SB, BB
+///     to_call: 100,
+///     player_to_act: 0,
+///     hero_position: 0,
+///     betting_history: vec![],
+/// };
+/// 
+/// // 상세 분석 실행
+/// let result = analyze_comprehensive(&web_state, "standard", true);
+/// match result {
+///     Ok(analysis) => {
+///         println!("추천 액션: {:?}", analysis.insights.as_ref().unwrap().recommended_action);
+///         println!("계산 시간: {}ms", analysis.metadata.calculation_time_ms);
+///     }
+///     Err(e) => println!("분석 실패: {}", e),
+/// }
+/// ```
+pub fn analyze_comprehensive(
+    web_state: &api::web_api::WebGameState,
+    analysis_depth: &str,
+    include_insights: bool,
+) -> Result<api::analysis::PokerAnalysisResponse, String> {
+    let request = api::analysis::AnalysisRequest {
+        game_state: web_state.clone(),
+        options: api::analysis::AnalysisOptions {
+            depth: analysis_depth.to_string(),
+            include_insights,
+            include_range_analysis: false,
+            include_equity_calculation: false,
+            max_calculation_time_ms: None,
+            opponent_modeling: api::analysis::OpponentModel::Tight,
+        },
+    };
+    
+    api::analysis::analyze_poker_state(request)
+        .map_err(|e| e.to_string())
+}
+
+/// 빠른 EV 계산 (기존 함수 개선 버전)
+/// 
+/// # 매개변수
+/// * `web_state` - 현재 게임 상태
+/// * `sample_count` - 몬테카를로 샘플 수 (None = 기본값)
+/// 
+/// # 반환값
+/// 각 액션별 EV와 신뢰도
+/// 
+/// # 예제
+/// ```
+/// use nice_hand_core::{calculate_quick_ev, api::web_api::WebGameState};
+/// 
+/// let web_state = WebGameState { /* ... */ };
+/// let ev_results = calculate_quick_ev(&web_state, Some(5000));
+/// 
+/// match ev_results {
+///     Ok(analysis) => {
+///         for action_ev in &analysis.action_evs {
+///             println!("{:?}: EV = {:.2}, 신뢰도 = {:.2}", 
+///                     action_ev.action, action_ev.ev, action_ev.confidence);
+///         }
+///     }
+///     Err(e) => println!("EV 계산 실패: {}", e),
+/// }
+/// ```
+pub fn calculate_quick_ev(
+    web_state: &api::web_api::WebGameState,
+    sample_count: Option<usize>,
+) -> Result<api::analysis::EVAnalysisResponse, String> {
+    let depth = if sample_count.unwrap_or(1000) > 10000 { "deep" } else { "quick" };
+    api::analysis::get_on_demand_ev_analysis(web_state, depth == "deep")
+}
+
+/// 게임 상태 검증 함수
+/// 
+/// 사용자가 제공한 게임 상태가 유효한지 검증합니다.
+/// 
+/// # 매개변수
+/// * `web_state` - 검증할 게임 상태
+/// 
+/// # 반환값
+/// * `Ok(())` - 유효한 상태
+/// * `Err(String)` - 검증 실패 이유
+/// 
+/// # 예제
+/// ```
+/// use nice_hand_core::{validate_game_state, api::web_api::WebGameState};
+/// 
+/// let web_state = WebGameState { /* ... */ };
+/// 
+/// match validate_game_state(&web_state) {
+///     Ok(()) => println!("게임 상태가 유효합니다"),
+///     Err(reason) => println!("유효하지 않은 게임 상태: {}", reason),
+/// }
+/// ```
+pub fn validate_game_state(web_state: &api::web_api::WebGameState) -> Result<(), String> {
+    use api::analysis::HoldemStateBuilder;
+    
+    match HoldemStateBuilder::from_web_state(web_state) {
+        Ok(_) => Ok(()),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+/// 액션 추천 함수 (개선된 버전)
+/// 
+/// 현재 상황에서 최적의 액션을 추천하고 각 액션의 강도를 제공합니다.
+/// 
+/// # 매개변수
+/// * `web_state` - 현재 게임 상태
+/// * `risk_tolerance` - 리스크 허용도 ("conservative", "balanced", "aggressive")
+/// 
+/// # 반환값
+/// (추천_액션, 액션별_강도_맵)
+/// 
+/// # 예제
+/// ```
+/// use nice_hand_core::{get_action_recommendation, api::web_api::WebGameState};
+/// 
+/// let web_state = WebGameState { /* ... */ };
+/// 
+/// match get_action_recommendation(&web_state, "balanced") {
+///     Ok((recommended, strengths)) => {
+///         println!("추천 액션: {:?}", recommended);
+///         for (action, strength) in strengths {
+///             println!("{}: {:.1}%", action, strength);
+///         }
+///     }
+///     Err(e) => println!("추천 실패: {}", e),
+/// }
+/// ```
+pub fn get_action_recommendation(
+    web_state: &api::web_api::WebGameState,
+    risk_tolerance: &str,
+) -> Result<(game::holdem::Act, std::collections::HashMap<String, f32>), String> {
+    let analysis_result = analyze_comprehensive(web_state, "standard", true)?;
+    
+    if let Some(insights) = analysis_result.insights {
+        let mut adjusted_strengths = insights.action_strength.clone();
+        
+        // 리스크 허용도에 따른 조정
+        match risk_tolerance {
+            "conservative" => {
+                // 보수적: 폴드와 콜의 강도를 높임
+                if let Some(fold_strength) = adjusted_strengths.get_mut("Fold") {
+                    *fold_strength = (*fold_strength * 1.2).min(100.0);
+                }
+                if let Some(call_strength) = adjusted_strengths.get_mut("Call") {
+                    *call_strength = (*call_strength * 1.1).min(100.0);
+                }
+            }
+            "aggressive" => {
+                // 공격적: 레이즈의 강도를 높임
+                for (action, strength) in adjusted_strengths.iter_mut() {
+                    if action.starts_with("Raise") {
+                        *strength = (*strength * 1.3).min(100.0);
+                    }
+                }
+            }
+            _ => {} // "balanced"는 조정하지 않음
+        }
+        
+        Ok((insights.recommended_action, adjusted_strengths))
+    } else {
+        Err("인사이트 생성 실패".to_string())
+    }
+}
+
 // ----------------------- 테스트 모듈 -----------------------
 #[cfg(test)]
 mod tests {

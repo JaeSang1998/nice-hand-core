@@ -4,9 +4,10 @@
 use crate::game::card_abstraction::hand_strength;
 use crate::game::holdem::{Act, State};
 use crate::solver::cfr_core::{Game, GameState};
+use serde::Serialize;
 
 /// 액션별 EV 계산 결과
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct ActionEV {
     pub action: Act,
     pub ev: f64,
