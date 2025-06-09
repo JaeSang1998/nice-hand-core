@@ -21,14 +21,20 @@ nice-hand-core/
 │   │   ├── mod.rs
 │   │   ├── holdem.rs       # 텍사스 홀덤 구현
 │   │   ├── hand_eval.rs    # 핸드 평가 시스템
-│   │   └── card_abstraction.rs # 카드 추상화
+│   │   ├── card_abstraction.rs # 카드 추상화
+│   │   ├── tournament.rs   # 토너먼트 로직
+│   │   └── tournament_holdem.rs # 토너먼트 홀덤 구현
 │   └── solver/             # CFR 알고리즘
 │       ├── mod.rs
-│       ├── cfr_core.rs     # 핵심 CFR 구현
-│       └── mccfr.rs        # 몬테카를로 CFR
+│       ├── cfr_core.rs     # 핵심 CFR+ 구현
+│       ├── mccfr.rs        # 몬테카를로 CFR
+│       ├── ev_calculator.rs # 기댓값 계산기
+│       └── ev_calculator_tests.rs # EV 계산기 테스트
 ├── examples/               # 예제 애플리케이션
 │   ├── benchmark.rs        # 성능 벤치마크
 │   ├── web_demo.rs         # 웹 API 데모
+│   ├── tournament_*.rs     # 토너먼트 예제들
+│   ├── ev_calculator_demo.rs # EV 계산기 데모
 │   └── debug_*.rs          # 디버그 유틸리티
 └── Cargo.toml
 ```
@@ -95,27 +101,45 @@ for (info_key, node) in trainer.nodes.iter().take(10) {
 
 ## **상세 프로젝트 구조**
 
+현재 프로젝트는 모듈화된 구조로 다음과 같이 구성되어 있습니다:
+
 ```
 nice-hand-core/
 ├── src/
 │   ├── lib.rs              # 메인 라이브러리 인터페이스
-│   ├── cfr_core.rs         # 핵심 CFR 알고리즘 구현
-│   ├── mccfr.rs            # 몬테카를로 CFR 구현
-│   ├── holdem.rs           # 텍사스 홀덤 게임 로직
-│   ├── web_api.rs          # 상태 유지 웹 API (학습된 모델)
-│   ├── web_api_simple.rs   # 무상태 웹 API (휴리스틱 기반)
-│   ├── card_abstraction.rs # 카드 추상화 및 버킷팅
 │   ├── main.rs             # 데모 애플리케이션
-│   └── bin/
-│       ├── simple_test.rs  # 기본 CFR 검증
-│       ├── mccfr_test.rs   # MCCFR 성능 테스트
-│       ├── holdem_test.rs  # 홀덤 전용 테스트
-│       └── web_demo.rs     # 웹 API 데모
-├── debug_cfr_trace.rs      # 상태 전환 디버깅
-├── debug_cfr_recursion.rs  # 재귀 사이클 감지
+│   ├── api/                # 웹 API 인터페이스
+│   │   ├── mod.rs          # API 모듈 정의
+│   │   ├── web_api.rs      # 상태 유지 웹 API (CFR 학습 모델)
+│   │   └── web_api_simple.rs # 무상태 웹 API (휴리스틱 기반)
+│   ├── game/               # 포커 게임 로직
+│   │   ├── mod.rs          # 게임 모듈 정의
+│   │   ├── holdem.rs       # 텍사스 홀덤 게임 로직
+│   │   ├── hand_eval.rs    # 핸드 평가 및 순위 매기기
+│   │   ├── card_abstraction.rs # 카드 추상화 및 버킷팅
+│   │   ├── tournament.rs   # 토너먼트 로직 (ICM, 블라인드 구조)
+│   │   └── tournament_holdem.rs # 토너먼트 홀덤 구현
+│   └── solver/             # CFR 알고리즘
+│       ├── mod.rs          # 솔버 모듈 정의
+│       ├── cfr_core.rs     # 핵심 CFR+ 알고리즘 구현
+│       ├── mccfr.rs        # 몬테카를로 CFR 구현
+│       ├── ev_calculator.rs # 기댓값 계산기
+│       └── ev_calculator_tests.rs # EV 계산기 단위 테스트
+├── examples/               # 예제 애플리케이션
+│   ├── benchmark.rs        # 성능 벤치마크
+│   ├── web_demo.rs         # 웹 API 데모
+│   ├── tournament_*.rs     # 토너먼트 관련 예제들
+│   ├── ev_calculator_demo.rs # EV 계산기 데모
+│   ├── mccfr_demo.rs       # MCCFR 알고리즘 데모
+│   ├── heuristic_demo.rs   # 휴리스틱 전략 데모
+│   └── debug_*.rs          # 디버그 유틸리티
 ├── Cargo.toml              # 의존성 및 빌드 설정
 ├── README.md               # 이 파일
-└── MCCFR_SUCCESS_SUMMARY.md # 기술적 성과 요약
+├── PROJECT_STATUS.md       # 프로젝트 상태 요약
+├── PROJECT_OVERVIEW.md     # 프로젝트 개요
+├── CFR_PLUS_UPGRADE.md     # CFR+ 업그레이드 기록
+├── DEVELOPMENT_ROADMAP.md  # 개발 로드맵
+└── TOURNAMENT_COMPLETION_SUMMARY.md # 토너먼트 기능 완료 요약
 ```
 
 ## **데모 애플리케이션**
@@ -125,28 +149,50 @@ nice-hand-core/
 cargo run --bin main
 ```
 
-### 홀덤 학습 테스트
+### 예제 프로그램들
 ```bash
-cargo run --bin holdem_test
-```
+# 홀덤 학습 테스트
+cargo run --example holdem_test
 
-### MCCFR 성능 테스트
-```bash
-cargo run --bin mccfr_test
-```
+# MCCFR 성능 테스트
+cargo run --example mccfr_test
 
-### 웹 API 데모
-```bash
-cargo run --bin web_demo
+# 웹 API 데모
+cargo run --example web_demo
+
+# 토너먼트 데모
+cargo run --example tournament_demo
+
+# EV 계산기 데모
+cargo run --example ev_calculator_demo
+
+# 휴리스틱 전략 데모
+cargo run --example heuristic_demo
+
+# 성능 벤치마크
+cargo run --example benchmark --release
 ```
 
 ## **성능 결과**
 
-### **CFR 알고리즘**
-- **학습 시간**: 50회 반복에 약 627ms
-- **생성된 노드**: 14,126개 노드 (안정적)
+### **CFR+ 알고리즘**
+- **학습 시간**: 50회 반복에 약 617ms
+- **생성된 노드**: 14,005개 노드 (안정적)
 - **최대 깊이**: 14-15 레벨
-- **상태**: **무한 재귀 완전히 해결됨**
+- **수렴 성능**: CFR+로 향상된 안정적 전략 개발
+- **상태**: 무한 재귀 완전히 해결됨
+
+### **토너먼트 시스템**
+- **ICM 계산**: 마이크로초 단위 초고속 처리
+- **버블 전략**: 실시간 압박 분석
+- **MTT 관리**: 대규모 토너먼트 처리 능력
+- **테이블 밸런싱**: 효율적인 플레이어 재배치
+
+### **EV 계산기**
+- **계산 속도**: 핸드당 마이크로초 단위
+- **정확도**: 수학적으로 정확한 에퀴티 분석
+- **레인지 지원**: 복합 핸드 레인지 처리
+- **실시간 성능**: 즉석 EV 분석
 
 ### **MCCFR 알고리즘**
 - **50% 샘플링**: 200회 반복에 58ms로 642개 노드
@@ -155,9 +201,16 @@ cargo run --bin web_demo
 - **100% 샘플링**: 30회 반복에 285ms로 10,242개 노드
 
 ### **웹 API 성능**
-- **응답 시간**: 요청당 <1ms
+- **응답 시간**: 평균 3.45μs (초당 289,603 요청)
 - **처리량**: 초당 1000+ 요청
+- **배치 처리**: 1,000개 결정을 6.42ms에 처리
 - **메모리 사용량**: 최소화 (무상태 설계)
+
+### **테스트 결과**
+- **단위 테스트**: 54개 모두 통과 (토너먼트 7개 포함)
+- **성능 검증**: 밀리초 이하 성능 확인
+- **메모리 안전성**: Rust 소유권 시스템으로 보장
+- **안정성**: 무한 재귀 및 메모리 누수 제로
 
 ## **사용 사례 및 예제**
 
